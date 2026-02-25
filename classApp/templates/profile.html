@@ -1,0 +1,12 @@
+<h1>Update my profile</h1>
+
+<form method="post">
+  {% csrf_token %}
+
+  {{ u_form.as_p }}
+  {{ p_form.as_p }}
+  <button type="submit">Create account</button>
+</form>
+
+<a href="{% url 'home' %}">Go back</a>
+

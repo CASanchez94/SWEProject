@@ -11,3 +11,7 @@ class Profile(models.Model):
 		return self.user.username
 
 
+#class UTRGV_event(models.Model):
+#	date = models.DateField(blank=True)
+#	location = model.TextField()
+#	cost = models.IntegerField()
