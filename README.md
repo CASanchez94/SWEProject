@@ -1,5 +1,5 @@
 ﻿# UTRGV Study Group Web Application
-Group: Xavier Amico, Fabian Garza, Chris Sanchez
+Xavier Amico, Fabian Garza, Chris Sanchez
 
 ## Project Description
 
@@ -23,3 +23,4 @@ File Sharing: Allows users to upload and distribute study materials such as note
 
 The goal of this project is to create a stronger sense of community at UTRGV while helping students succeed academically through peer collaboration. The platform promotes meaningful connections and more productive group learning experiences by offering tools for communication, organizing, and resource sharing.
 
+[UTRGV Study Group Agile Plan] https://docs.google.com/spreadsheets/d/165LKsBJCQWoWg33KXXaFWspVKcsemWznsbKjy5WIu_k/edit?usp=sharing
