@@ -1,4 +1,5 @@
-﻿# SWEProject UTRGV Study Group Web Application
+﻿# UTRGV Study Group Web Application
+Group: Xavier Amico, Fabian Garza, Chris Sanchez
 
 ## Project Description
 
@@ -21,3 +22,4 @@ File Sharing: Allows users to upload and distribute study materials such as note
 ## Project Goal
 
 The goal of this project is to create a stronger sense of community at UTRGV while helping students succeed academically through peer collaboration. The platform promotes meaningful connections and more productive group learning experiences by offering tools for communication, organizing, and resource sharing.
+
