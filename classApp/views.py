@@ -5,7 +5,13 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 def home(request):
-	return render(request, 'home.html',{})
+	return render(request, 'feed.html',{})
+
+def discover(request):
+	return render(request, 'discover.html',{})
+
+def create_group(request):
+	return render(request, 'create_group.html',{})
 
 def register(request):
     if request.method == "POST":
