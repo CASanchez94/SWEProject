@@ -1,12 +1,16 @@
-<h1>Register New Account</h1>
+{% load crispy_forms_tags %}
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Create account</button>
-</form>
-
-<a href="{% url 'login' %}">Login</a>
-
-
-
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 border p-4 shadow-sm">
+            <h2>Create an Account</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}  <!-- Automatically adds Bootstrap classes -->
+                <button type="submit" class="btn btn-primary w-100 mt-3">Register</button>
+            </form>
+            <hr>
+            <p class="text-center">Already registered? <a href="{% url 'login' %}">Login</a></p>
+        </div>
+    </div>
+</div>
