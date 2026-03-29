@@ -12,4 +12,11 @@ class ProfileUpdateForm(forms.ModelForm):
 		model = Profile
 		fields = ['bio','college','major']
 
-class
+class GroupEventForm(forms.ModelForm):
+	class Meta:
+		model = groupEvent
+		fields = ['title', 'date', 'location', 'attendees']
+		widgets = {
+			# This allows you to select multiple users at once 
+			'attendees': forms.CheckboxSelectMultiple(),
+		}
