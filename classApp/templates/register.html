@@ -2,6 +2,8 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
 <div class="container mt-5">
     <div class="card p-4 shadow">
         <h2>Register</h2>
@@ -13,19 +15,38 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com"></script>
 <script>
-    $("#id_college").change(function () {
-        const url = $("#regForm").attr("data-majors-url");
-        const collegeId = $(this).val();
+$(document).ready(function() {
+    const $major = $("#id_major");
 
+    // Initially disable the Major dropdown
+    $major.prop("disabled", true);
+
+    $("#id_college").on("change", function () {
+        const collegeId = $(this).val();
+        const url = $("#regForm").data("majors-url");
+
+        if (!collegeId) {
+            // No college selected → reset and disable Major
+            $major.html('<option value="">---------</option>');
+            $major.prop("disabled", true);
+            return;
+        }
+
+        // AJAX request to load majors
         $.ajax({
             url: url,
             data: { 'college_id': collegeId },
             success: function (data) {
-                $("#id_major").html(data);
+                $major.html(data);        // Replace options
+                $major.prop("disabled", false);  // Enable Major
+            },
+            error: function(xhr) {
+                console.error("AJAX Error: ", xhr.statusText);
+                $major.prop("disabled", true);  // Keep disabled on error
             }
         });
     });
+});
 </script>
 {% endblock %}

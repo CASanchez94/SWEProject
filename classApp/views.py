@@ -40,7 +40,7 @@ def register(request):
 def load_majors(request):
     college_id = request.GET.get('college_id')
     majors = Major.objects.filter(college_id=college_id).order_by('name')
-    return render(request, 'major_dropdown_options.html', {'majors': major})
+    return render(request, 'major_dropdown_options.html', {'majors': majors})
 
 @login_required	
 def profile(request):
