@@ -26,11 +26,3 @@ body{
 .sidebar-links.nav-pills .nav-link.active .bi {
     color: #2563eb !important;
 }
-
-.sidebar-logout-btn {
-    border: none;
-    background: transparent;
-    width: 100%;
-    text-align: left;
-    padding: 0;
-}
