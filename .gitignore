@@ -1,0 +1,17 @@
+# Django
+
+db.sqlite3
+
+# Python Junk 
+
+__pycache__/
+*.pyc
+
+# Virtual env
+
+venv/
+virt/
+
+# Misc 
+
+*.log
