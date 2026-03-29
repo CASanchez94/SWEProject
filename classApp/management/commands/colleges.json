@@ -1,0 +1,225 @@
+{
+  "Undergraduate": {
+    "Robert C. Vackar College of Business and Entrepreneurship": [
+      "Accountancy",
+      "Business Analytics",
+      "Economics",
+      "Entrepreneurship and Innovation",
+      "Finance",
+      "Global Supply Chain Management",
+      "Hospitality and Tourism Management",
+      "Information Systems",
+      "International Business",
+      "Management",
+      "Marketing"
+    ],
+    "College of Education and P-16 Integration": [
+      "Bilingual Education",
+      "Early Care and Early Childhood Studies",
+      "English Education",
+      "Mathematics Education",
+      "Social Studies",
+      "Special Education"
+    ],
+    "College of Engineering and Computer Science": [
+      "Civil Engineering",
+      "Computer Engineering",
+      "Computer Science",
+      "Cyber Security",
+      "Electrical Engineering",
+      "Engineering Technology",
+      "Manufacturing Engineering",
+      "Mechanical Engineering"
+    ],
+    "College of Fine Arts": [
+      "Dance",
+      "Music",
+      "Theatre",
+      "Visual Communication Design",
+      "Art"
+    ],
+    "College of Health Professions": [
+      "Addiction Studies",
+      "American Sign Language and Interpretation",
+      "Biomedical Science",
+      "Communication Sciences and Disorders",
+      "Exercise Science",
+      "Integrated Health Sciences",
+      "Medical Laboratory Science",
+      "Nutritional Sciences",
+      "Rehabilitation Services"
+    ],
+    "College of Liberal Arts": [
+      "Anthropology",
+      "Communication Studies",
+      "Criminal Justice",
+      "English",
+      "History",
+      "Philosophy",
+      "Psychology",
+      "Sociology",
+      "Spanish"
+    ],
+    "College of Sciences": [
+      "Applied Statistics and Data Science",
+      "Biology",
+      "Biomedical Science",
+      "Chemistry",
+      "Environmental Science",
+      "Marine Biology",
+      "Mathematics",
+      "Physics",
+      "Sustainable Agriculture and Food Systems"
+    ],
+    "School of Nursing": [
+      "Nursing",
+      "Nursing (Second Degree)",
+      "Nursing (RN to BSN)"
+    ],
+    "School of Social Work": [
+      "Social Work"
+    ],
+    "School of Medicine": [
+      "Pre‑Medicine / Medical pathways"
+    ]
+  },
+  "Graduate": {
+    "Robert C. Vackar College of Business and Entrepreneurship": [
+      {
+        "Business Administration": [
+          "Accounting",
+          "Business Analytics",
+          "Entrepreneurship",
+          "Financial Planning",
+          "Health Care Administration",
+          "Human Resource Management",
+          "International Trade",
+          "Marketing"
+        ]
+      },
+      "Accountancy",
+      {
+        "Business Analytics and Artificial Intelligence": [
+          "Healthcare Analytics",
+          "Marketing Analytics"
+        ]
+      },
+      {
+        "Business Administration Doctoral": [
+          "Accounting",
+          "Finance",
+          "Information Systems",
+          "Management",
+          "Marketing"
+        ]
+      }
+    ],
+    "College of Education and P-16 Integration": [
+      "Bilingual Education",
+      "Early Childhood",
+      {
+        "Curriculum and Instruction": [
+          "Elementary Math & Science",
+          "English Composition",
+          "Mathematics Education"
+        ]
+      },
+      {
+        "Curriculum and Instruction Doctoral": [
+          "Bilingual Studies",
+          "Curriculum & Pedagogical Generalist",
+          "Educational Technology",
+          "Literacy",
+          "Mathematics Education",
+          "Science Education",
+          "Special Education"
+        ]
+      },
+      "Educational Leadership",
+      "Educational Technology",
+      "Counseling"
+    ],
+    "College of Engineering and Computer Science": [
+      "Engineering Management",
+      "Civil Engineering",
+      "Biomedical Engineering",
+      "Computer Science",
+      "Mechanical Engineering",
+      "Manufacturing Engineering",
+      "Materials Science and Engineering"
+    ],
+    "College of Fine Arts": [
+      "Art",
+      "Creative Writing",
+      {
+        "Music": [
+          "Conducting",
+          "Ethnomusicology",
+          "Instrument Performance",
+          "Music Education",
+          "Performance",
+          "Theory‑Composition"
+        ]
+      }
+    ],
+    "College of Health Professions": [
+      "Clinical Psychology",
+      "Clinical Rehabilitation Counseling",
+      "Communication Sciences and Disorders",
+      "Exercise Science",
+      "Health Sciences",
+      "Family Nurse Practitioner",
+      "Occupational Therapy Doctorate",
+      "Physical Therapy",
+      "Physician Assistant Studies"
+    ],
+    "College of Liberal Arts": [
+      "Clinical Psychology",
+      "Communication",
+      "Disaster Studies",
+      "English",
+      "History",
+      "Political Science",
+      "School Psychology",
+      {
+        "Interdisciplinary Studies": [
+          "Anthropology",
+          "Art History",
+          "English",
+          "History",
+          "Mexican American Studies"
+        ]
+      },
+      "Sociology"
+    ],
+    "College of Sciences": [
+      "Agricultural, Environmental, & Sustainability Sciences",
+      "Applied Statistics and Data Science",
+      "Biochemistry and Molecular Biology",
+      "Biology",
+      "Chemistry",
+      "Ocean, Coastal & Earth Sciences",
+      {
+        "Mathematics": [
+          "Applied Mathematics",
+          "Mathematics",
+          "Mathematics Teaching",
+          "Statistics"
+        ]
+      },
+      {
+        "Mathematics & Statistics with Interdisciplinary Applications Doctoral": []
+      },
+      "Human Genetics Doctoral",
+      "Physics Doctoral",
+      "Computer Science with Interdisciplinary Applications Doctoral",
+      "Rehabilitation Counseling Doctoral"
+    ],
+    "School of Nursing": [
+      "Nursing Practice"
+    ],
+    "School of Social Work": [
+      "Social Work"
+    ]
+  }
+}
