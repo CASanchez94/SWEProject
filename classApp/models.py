@@ -10,7 +10,7 @@ class Profile(models.Model):
 		FineArts = "ARTS", "Fine Arts"
 		Sciences = "SCI", "Science"
 
-	class Major(modes.TextChoices):
+	class Major(models.TextChoices):
 		Undecided = "UNDC", "Undecided"
 		CompSci = "CSCI", "Computer Science"
 		English = "ELA", "English"
