@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm 
-from .forms import UserUpdateForm, ProfileUpdateForm
+from .forms import UserUpdateForm, ProfileUpdateForm, CustomRegistrationForm
+from .models import Profile, Major
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -15,17 +16,31 @@ def create_group(request):
 	return render(request, 'create_group.html',{})
 
 def register(request):
-    if request.method == "POST":
-        form = UserCreationForm(request.POST)
+    if request.method == 'POST':
+        form = CustomRegistrationForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Account created successfully!")
-            print("User created successfully")
-            return redirect("login")
+            user = form.save(commit=False)
+            user.email = form.cleaned_data['email']
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.save()
+            
+            # Update the auto-created Profile
+            profile, _ = Profile.objects.get_or_create(user=user)
+            profile.college = form.cleaned_data['college']
+            profile.major = form.cleaned_data['major']
+            profile.save()
+            
+            return redirect('login')
     else:
-        form = UserCreationForm()
+        form = CustomRegistrationForm()
+    return render(request, 'register.html', {'form': form})
 
-    return render(request, "register.html", {"form": form})
+# AJAX View for dynamic dropdown
+def load_majors(request):
+    college_id = request.GET.get('college_id')
+    majors = Major.objects.filter(college_id=college_id).order_by('name')
+    return render(request, 'major_dropdown_options.html', {'majors': major})
 
 @login_required	
 def profile(request):
