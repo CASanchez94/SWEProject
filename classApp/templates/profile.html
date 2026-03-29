@@ -1,3 +1,7 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
 <h1>Update my profile</h1>
 
 <form method="post">
@@ -5,8 +9,9 @@
 
   {{ u_form.as_p }}
   {{ p_form.as_p }}
-  <button type="submit">Create account</button>
+  <button type="submit">Save Changes</button>
 </form>
 
-<a href="{% url 'discover' %}">Go back</a>
+<a href="{% url 'home' %}">Go back</a>
+{% endblock %}
 

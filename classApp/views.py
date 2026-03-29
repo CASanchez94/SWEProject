@@ -4,12 +4,13 @@ from .forms import UserUpdateForm, ProfileUpdateForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
+@login_required
 def home(request):
 	return render(request, 'feed.html',{})
-
+@login_required
 def discover(request):
 	return render(request, 'discover.html',{})
-
+@login_required
 def create_group(request):
 	return render(request, 'create_group.html',{})
 
