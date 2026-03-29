@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models	import User
-from .models import Profile
+from .models import Profile, GroupEvent
 
 class UserUpdateForm(forms.ModelForm):
 	class Meta:
@@ -14,7 +14,7 @@ class ProfileUpdateForm(forms.ModelForm):
 
 class GroupEventForm(forms.ModelForm):
 	class Meta:
-		model = groupEvent
+		model = GroupEvent
 		fields = ['title', 'date', 'location', 'attendees']
 		widgets = {
 			# This allows you to select multiple users at once 
