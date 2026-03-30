@@ -46,23 +46,21 @@ def load_majors(request):
 def profile(request):
     if request.method == "POST":
         u_form = UserUpdateForm(request.POST, instance=request.user)
-        p_form = ProfileUpdateForm(request.POST, instance=request.user.profile)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
 
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
             messages.success(request, "Profile updated successfully!")
             print("User profile udpated successfully")
-            return redirect("profile")
+            return redirect("home")
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
     
     return render(request, "profile.html", {"u_form": u_form, "p_form":p_form})
 
-
-
-
-
-
-
+@login_required
+def profile_page(request):
+    events = request.user.events_attending.all().order_by('date')
+    return render(request, "profile_page.html", {"events": events})

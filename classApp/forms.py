@@ -12,7 +12,7 @@ class UserUpdateForm(forms.ModelForm):
 class ProfileUpdateForm(forms.ModelForm):
 	class Meta:
 		model = Profile
-		fields = ['bio','college','major']
+		fields = ['profile_pic','bio','college','major']
 
 class GroupEventForm(forms.ModelForm):
 	class Meta:
