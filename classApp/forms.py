@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models	import User
 from django.core.exceptions import ValidationError
-from .models import Profile, GroupEvent, College, Major
+from .models import Profile, GroupEvent, College, Major, FeedChat
 
 class UserUpdateForm(forms.ModelForm):
 	class Meta:
@@ -51,3 +51,18 @@ class CustomRegistrationForm(UserCreationForm):
         if User.objects.filter(email=email).exists():
             raise ValidationError("An account with this email already exists.")
         return email
+
+class FeedChatForm(forms.ModelForm):
+    class Meta:
+        model = FeedChat
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': "What's on your mind? Share with your study group..."
+            })
+        }
+        labels = {
+            'content': ''
+        }
