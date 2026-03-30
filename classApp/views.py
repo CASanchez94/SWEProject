@@ -1,13 +1,28 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm 
-from .forms import UserUpdateForm, ProfileUpdateForm, CustomRegistrationForm
-from .models import Profile, Major
+from .forms import UserUpdateForm, ProfileUpdateForm, CustomRegistrationForm, FeedChatForm
+from .models import Profile, Major, FeedChat, College
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-# @login_required
+@login_required
 def home(request):
-	return render(request, 'feed.html',{})
+    if request.method == 'POST':
+        form = FeedChatForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.user = request.user
+            post.save()
+            return redirect('home')
+    else:
+        form = FeedChatForm()
+
+    posts = FeedChat.objects.select_related('user').order_by('-created_at')
+
+    return render(request, 'feed.html', {
+        'form': form,
+        'posts': posts
+    })
 @login_required
 def discover(request):
 	return render(request, 'discover.html',{})
