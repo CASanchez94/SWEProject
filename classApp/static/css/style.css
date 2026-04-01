@@ -89,3 +89,8 @@ input{
 .button-link:hover{
     background-color:#333;
 }
+
+.group-list{
+    max-height:200px;
+    overflow-y:auto;
+}
