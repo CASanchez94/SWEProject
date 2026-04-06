@@ -1,18 +1,59 @@
 {% extends 'base.html' %}
 {% block content %}
-
-
 <h1>Update my profile</h1>
-
-<form method="post">
+<form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
   {{ u_form.as_p }}
-  {{ p_form.as_p }}
-  <button class="submit">Update profile</button>
+
+  <!-- Profile Picture Preview -->
+  <div class="mb-3">
+    {% if user.profile.profile_pic %}
+      <img src="{{ user.profile.profile_pic.url }}"
+           alt="Current Profile Picture"
+           id="preview"
+           class="rounded-circle mb-2"
+           width="80" height="80"
+           style="object-fit: cover;">
+    {% else %}
+      <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mb-2"
+           style="width:80px; height:80px;">
+        <span class="text-white fw-bold" style="font-size:1.5rem;">
+          {{ user.username|first|upper }}
+        </span>
+      </div>
+      <img id="preview" style="display:none;" class="rounded-circle mb-2" width="80" height="80">
+    {% endif %}
+    <br>
+    <label class="form-label fw-bold">Profile Picture</label>
+    <input type="file" name="profile_pic" accept="image/*" class="form-control" onchange="previewImage(event)">
+  </div>
+
+  <!-- Render remaining fields manually -->
+  <p>
+    <label for="{{ p_form.bio.id_for_label }}">Bio:</label>
+    {{ p_form.bio }}
+  </p>
+  <p>
+    <label for="{{ p_form.college.id_for_label }}">College:</label>
+    {{ p_form.college }}
+  </p>
+  <p>
+    <label for="{{ p_form.major.id_for_label }}">Major:</label>
+    {{ p_form.major }}
+  </p>
+
+  <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
 </form>
+<a href="{% url 'profile_page' %}">Go back</a>
 
-<a href="{% url 'profile_page' %}" class="button-link">Go back</a>
-
+<script>
+  function previewImage(event) {
+    const preview = document.getElementById('preview');
+    if (preview) {
+      preview.src = URL.createObjectURL(event.target.files[0]);
+      preview.style.display = 'block';
+    }
+  }
+</script>
 {% endblock %}
-

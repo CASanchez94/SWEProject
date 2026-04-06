@@ -26,12 +26,23 @@
                 <span>Create Group</span>
             </a>
         </li>
-
         <li class="nav-item">
-    <a href="{% url 'profile_page' %}" class="nav-link text-body-emphasis">
-        <i class="bi bi-person"></i>
-        <span>Profile</span>
-    </a>
+            <a href="{% url 'profile_page' %}" class="nav-link text-body-emphasis d-flex align-items-center gap-2">
+                {% if user.profile.profile_pic %}
+                <img src="{{ user.profile.profile_pic.url }}" 
+                width="22" height="22" 
+                class="rounded-circle" 
+                style="object-fit: cover;">
+                {% else %}
+      <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center flex-shrink-0"
+            style="width:22px; height:22px;">
+            <span class="text-white fw-bold" style="font-size:0.65rem;">
+            {{ user.username|first|upper }}
+    </span>
+      </div>
+    {% endif %}
+    <span>Profile</span>
+  </a>
 </li>
     </ul>
 

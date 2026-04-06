@@ -95,3 +95,6 @@ input{
     overflow-y:auto;
 }
 
+textarea {
+  resize: none;
+}
