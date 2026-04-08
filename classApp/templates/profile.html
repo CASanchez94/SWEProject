@@ -42,10 +42,10 @@
     <label for="{{ p_form.major.id_for_label }}">Major:</label>
     {{ p_form.major }}
   </p>
-
-  <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
 </form>
-<a href="{% url 'profile_page' %}">Go back</a>
+
+ <button type="submit" class="btn btn-primary mt-3 btn-md">Save Changes</button>
+<a href="{% url 'profile_page' %}" class ="btn btn-secondary mt-3 btn-md">Go back</a>
 
 <script>
   function previewImage(event) {
