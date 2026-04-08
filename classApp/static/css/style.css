@@ -39,29 +39,6 @@ html, body {
 .login-container{
     width:320px;
 }
-.form-group{
-    text-align: left;
-    margin-bottom: 15px;
-}
-
-input{
-    width: 100%;
-    padding: 8px;
-}
-
-.button-link{
-    display:inline-block;
-    margin-top:15px;
-    padding:10px 20px;
-    background-color:#555;
-    color:white;
-    text-decoration:none;
-    border-radius:5px;
-}
-
-.button-link:hover{
-    background-color:#333;
-}
 
 .group-list{
     max-height:200px;
