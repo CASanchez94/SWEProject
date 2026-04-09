@@ -1,0 +1,26 @@
+.course-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    font-size: 0.9rem;
+}
+.badge-blue{
+    background-color: #3b82f6;
+}
+
+.discover-card {
+    border-radius: 16px !important;
+    background-color: white;
+    max-width: 300px;
+}
+
+.card-title-text{
+    font-size: 0.95rem;
+    color: #6b7280;
+    line-height: 1.6;
+}

@@ -1,6 +1,40 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
-<h1 class="fw-bold fs-1">Discover Groups</h1>
-<p>Find and join study groups for your courses.</p>
+
+<link rel="stylesheet" href="{% static 'css/discover.css' %}">
+<div class="discover-page">
+    <h1 class="fw-bold fs-1">Discover Groups</h1>
+    <p>Find and join study groups for your courses.</p>
+
+
+    <!-- hard-coded example for presentation -->
+<div class="row g-4">
+    <div class="col-auto">
+        <div class="card discover-card shadow-sm border-0 rounded-4 h-100">
+            <div class="card-body d-flex flex-column p-4">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div class="course-badge badge-blue">
+                        CS
+                    </div>
+                </div>
+                <h4 class="fw-bold mb-3"> CSCI-1011</h4>
+                <p class="card-title-text mb-3">
+                   Introduction to Computer Science
+                </p>
+                <p class="card-desc mb-4">
+                    An introduction to the breadth of the field of computer science. Topics include an introduction to computer science as a career, overviews of various computer science areas and topics, and foundations of computational problem solving.
+                </p>
+                <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                    <small class="text-muted"><i class="bi bi-people"></i> 10 Members</small>
+                    <a href="{% url 'group_details'%}" class="btn btn-light border rounded-3">View Group</a>
+                </div>
+            </div>
+        </div>
+    </div>
+ </div>
+</div>
+
 {% endblock %}
+
+

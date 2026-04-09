@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/discover.css' %}">
+
+<!-- Header -->
+<div class="container-fluid px-4 py-3 border-bottom mb-4">
+
+  <div class="d-flex justify-content-between align-items-start">
+    <div class="d-flex align-items-center gap-3">
+      <div class="course-badge badge-blue"
+           style="width:80px;height:80px;font-size:1.4rem;border-radius:16px;">
+        CS
+      </div>
+
+      <div>
+        <h3 class="fw-bold mb-1">CSCI-1101</h3>
+        <p class="mb-1 text-dark">Introduction to Computer Science</p>
+        <p class="mb-1 text-muted" style="font-size:0.9rem;">
+          An Introduction to the breadth of the field of Computer Science
+        </p>
+        <small class="text-muted">
+          <i class="bi bi-people"></i> 10 members • Created a week ago
+        </small>
+      </div>
+    </div>
+
+    <div class="d-flex gap-2">
+      <a href="#" class="btn btn-light border rounded-3">
+        <i class="bi bi-gear"></i> Settings
+      </a>
+      <a href="#" class="btn btn-light border rounded-3">
+        <i class="bi bi-box-arrow-right"></i> Leave Group
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Tabs -->
+ <div class="d-flex gap-2 mb-4">
+    <a href="#" class="btn btn-light border rounded-pill px-3">
+        <i class="bi bi-card-text"></i> Posts
+    </a>
+    <a href="#" class="btn btn-light border rounded-pill px-3">
+        <i class="bi bi-file-earmark"></i> Resources
+    </a>
+    <a href="#" class="btn btn-light border rounded-pill px-3">
+        <i class="bi bi bi0calender3"></i> Study Sessions
+    </a>
+</div>
+
+<!-- Post Input -->
+ <div class="border rounded-4 p-3 mb-4 text-muted bg-white" style="cursor:text;font-size:0.95rem;">
+    What's on your mind? Share with the group..
+ </div>
+
+
+ <!-- Example post for presentation -->
+  <div class="border rounded-4 p-4 mb-3 bg-white">
+
+    <div class="d-flex align-items-center gap-3 mb-3">
+        <p class="fw-bold mb-0">Alex G</p>
+        <small class="text-muted">1 day ago</small>
+    </div>
+
+    <p class="mb-4">
+    Uploaded the notes from today's lecture.
+    </p>
+</div>
+
+<!-- Attachments for later -->
+<div class="border rounded-3 p-3 d-flex align-items center justify-content-between mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <div class="rounded-3 p-2" style="background-color:#eff6ff">
+            <i class="bi bi-file-earmark-text text-primary fs-5"></i>
+        </div>
+    <div>
+        <p class="mb-0 fw-bold" style="font-size:0.9rem;">Loops Notes.pdf</p>
+        <small class="text-muted">PDF</small>
+        </div>
+    </div>
+    <a href="#" class="btn  btn-light border rounded-3">Download</a>
+</div>
+
+
+<!-- Post Activity -->
+ <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+    <div class="d-flex gap-3">
+        <small class="text-muted" style="cursor:pointer;">
+            <i class="bi bi-heart"></i> 12
+        </small>
+        <small class="text-muted" style="cursor:pointer;">
+            <i class="bi bi-chat"></i> 15
+        </small>
+        <div>
+        <small class="text-muted" style="cursor:pointer;">
+            <i class="bi bi-share"></i> 5
+        </small>
+    </div>
+ </div>
+</div>
+{% endblock %}

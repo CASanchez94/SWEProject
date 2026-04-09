@@ -79,3 +79,6 @@ def profile(request):
 def profile_page(request):
     events = request.user.events_attending.all().order_by('date')
     return render(request, "profile_page.html", {"events": events})
+
+def group_details(request):
+    return render(request, 'group_details.html', {})

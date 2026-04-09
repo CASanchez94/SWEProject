@@ -28,5 +28,6 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('discover/', views.discover, name='discover'),
     path('create-group/', views.create_group, name='create_group'),
-    path('ajax/load-majors/',views.load_majors, name='ajax_load_majors')
+    path('ajax/load-majors/',views.load_majors, name='ajax_load_majors'),
+    path('groups/CSCI-1101/', views.group_details, name='group_details')
 ]
