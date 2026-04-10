@@ -19,6 +19,8 @@ class Command(BaseCommand):
             data = json.load(file)
 
         for level, colleges in data.items():
+            is_graduate = (level == "Graduate")
+            
             for college_name, majors in colleges.items():
                 college_obj, _ = College.objects.get_or_create(name=college_name)
                 
@@ -30,9 +32,11 @@ class Command(BaseCommand):
                         major_name = list(item.keys())[0]
 
                     # Now creates a unique entry for every major + college combination
+                    # Major name stays clean without level parentheses - is_graduate flag handles the distinction
                     Major.objects.get_or_create(
-                        name=f"{major_name} ({level})",
-                        college=college_obj
+                        name=major_name,
+                        college=college_obj,
+                        defaults={'is_graduate': is_graduate}
                     )
         
         self.stdout.write(self.style.SUCCESS('Successfully imported data!'))

@@ -7,38 +7,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registeration</title>
+    <title>StudyHub Registration</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 </head>
 <body>
-   
-    <div class="container mt-5">
-        <div class="card p-4 shadow">
-            
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+        <div class="card shadow-lg" style="width: 100%; max-width: 500px;">
+            <div class="card-body p-5">
+                <h1 class="text-center mb-1" style="color: #007bff; font-weight: bold;">StudyHub</h1>
+                <h2 class="text-center mb-2">Create Your Account</h2>
+                <p class="text-center text-muted mb-4">Join a study group, get involved with the community and connect with classmates. </p>
+                
+                {% if form.errors or form.non_field_errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>❌ Registration Failed - Please fix these errors:</strong>
+                        
+                        {% for error in form.non_field_errors %}
+                            <div class="mt-2">{{ error }}</div>
+                        {% endfor %}
+                        
+                        {% for field in form %}
+                            {% if field.errors %}
+                                <div class="mt-2"><strong>{{ field.label }}:</strong> {{ field.errors|join:", " }}</div>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+                
+                <form method="post" id="regForm" data-majors-url="{% url 'ajax_load_majors' %}">
+                    {% csrf_token %}
+                    
+                    <!-- Personal Information Section -->
+                    <h5 class="mb-3 text-secondary">Personal Information</h5>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label for="id_first_name" class="form-label small fw-bold">First Name</label>
+                                <input type="text" class="form-control {% if form.first_name.errors %}is-invalid{% endif %}" id="id_first_name" name="first_name" value="{{ form.first_name.value|default:'' }}" required>
+                                {% if form.first_name.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.first_name.errors|join:", " }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label for="id_last_name" class="form-label small fw-bold">Last Name</label>
+                                <input type="text" class="form-control {% if form.last_name.errors %}is-invalid{% endif %}" id="id_last_name" name="last_name" value="{{ form.last_name.value|default:'' }}" required>
+                                {% if form.last_name.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.last_name.errors|join:", " }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
 
-            <form method="post" id="regForm" data-majors-url="{% url 'ajax_load_majors' %}">
-                {% csrf_token %}
-                {{ form|crispy }}
-                <button type="submit" class="btn btn-primary w-100 mt-3">Create Account</button>
-            </form>
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label small fw-bold">UTRGV Email</label>
+                        <input type="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" id="id_email" name="email" value="{{ form.email.value|default:'' }}" required>
+                        <small class="text-muted">Must be a @utrgv.edu email</small>
+                        {% if form.email.errors %}
+                            <div class="invalid-feedback d-block">{{ form.email.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label small fw-bold">Username</label>
+                        <input type="text" class="form-control {% if form.username.errors %}is-invalid{% endif %}" id="id_username" name="username" value="{{ form.username.value|default:'' }}" required>
+                        <small class="text-muted">Letters, digits and @/./+/-/_ only</small>
+                        {% if form.username.errors %}
+                            <div class="invalid-feedback d-block">{{ form.username.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Academic Information Section -->
+                    <h5 class="mb-3 text-secondary">Academic Information</h5>
+                    
+                    <div class="mb-3">
+                        <label for="id_classification" class="form-label small fw-bold">Year in School</label>
+                        <select class="form-select {% if form.classification.errors %}is-invalid{% endif %}" id="id_classification" name="classification" required>
+                            <option value="">Select your year...</option>
+                            {% for value, label in form.classification.field.choices %}
+                                <option value="{{ value }}" {% if form.classification.value == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if form.classification.errors %}
+                            <div class="invalid-feedback d-block">{{ form.classification.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_college" class="form-label small fw-bold">College</label>
+                        <select class="form-select {% if form.college.errors %}is-invalid{% endif %}" id="id_college" name="college" required>
+                            <option value="">Select your college...</option>
+                            {% for college in form.college.field.queryset %}
+                                <option value="{{ college.id }}" {% if form.college.value == college.id|stringformat:'s' %}selected{% endif %}>{{ college.name }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if form.college.errors %}
+                            <div class="invalid-feedback d-block">{{ form.college.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="id_major" class="form-label small fw-bold">Major</label>
+                        <select class="form-select {% if form.major.errors %}is-invalid{% endif %}" id="id_major" name="major" required>
+                            <option value="">Select College And Year</option>
+                        </select>
+                        {% if form.major.errors %}
+                            <div class="invalid-feedback d-block">{{ form.major.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Security Section -->
+                    <h5 class="mb-3 text-secondary">Create Password</h5>
+                    
+                    <div class="mb-3">
+                        <label for="id_password1" class="form-label small fw-bold">Password</label>
+                        <input type="password" class="form-control {% if form.password1.errors %}is-invalid{% endif %}" id="id_password1" name="password1" required>
+                        {% if form.password1.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.password1.errors %}
+                                    <div>• {{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_password2" class="form-label small fw-bold">Confirm Password</label>
+                        <input type="password" class="form-control {% if form.password2.errors %}is-invalid{% endif %}" id="id_password2" name="password2" required>
+                        {% if form.password2.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.password2.errors %}
+                                    <div>• {{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mt-4 py-2 fw-bold">Create Account</button>
+                    
+                    <p class="text-center mt-3 mb-0">
+                        <small>Already have an account? <a href="{% url 'login' %}">Sign in here</a></small>
+                    </p>
+                </form>
+            </div>
         </div>
     </div>
     
 <script>
 $(document).ready(function() {
     const $major = $("#id_major");
+    const $college = $("#id_college");
+    const $classification = $("#id_classification");
 
     // Initially disable the Major dropdown
     $major.prop("disabled", true);
 
-    $("#id_college").on("change", function () {
-        const collegeId = $(this).val();
+    // Function to load majors
+    function loadMajors() {
+        const collegeId = $college.val();
+        const classification = $classification.val();
         const url = $("#regForm").data("majors-url");
 
-        if (!collegeId) {
+        if (!collegeId || !classification) {
             // No college selected → reset and disable Major
             $major.html('<option value="">---------</option>');
             $major.prop("disabled", true);
@@ -48,7 +189,10 @@ $(document).ready(function() {
         // AJAX request to load majors
         $.ajax({
             url: url,
-            data: { 'college_id': collegeId },
+            data: { 
+                'college_id': collegeId,
+                'classification': classification
+            },
             success: function (data) {
                 $major.html(data);        // Replace options
                 $major.prop("disabled", false);  // Enable Major
@@ -58,6 +202,16 @@ $(document).ready(function() {
                 $major.prop("disabled", true);  // Keep disabled on error
             }
         });
+    }
+
+    // Load majors when college changes
+    $college.on("change", function () {
+        loadMajors();
+    });
+
+    // Load majors when classification changes
+    $classification.on("change", function () {
+        loadMajors();
     });
 });
 </script> 
