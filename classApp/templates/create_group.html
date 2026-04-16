@@ -1,16 +1,84 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="container-fluid px-0">
+    <h1 class="fw-bold fs-1 mb-4">Create a Group</h1>
 
-<h1 class="fw-bold fs-1">Create a Group</h1>
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 p-md-5">
+                    <h2 class="fw-bold mb-2">Group Creation</h2>
+                    <p class="text-muted mb-4">Set up a new study group by filling out the details below.</p>
 
-<form>
-    <div class="mb-3">
-        <label class="form-label">Group Name</label>
-        <input type="text" class="form-control">
+                    <form>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label for="courseCode" class="form-label fw-semibold">Course Code</label>
+                                <input type="text" class="form-control form-control-lg rounded-3" id="courseCode" name="course_code" placeholder="e.g. CSCI 3340">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="courseSubject" class="form-label fw-semibold">Course Subject</label>
+                                <input type="text" class="form-control form-control-lg rounded-3" id="courseSubject" name="course_subject" placeholder="e.g. Software Engineering">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="groupName" class="form-label fw-semibold">Group Name</label>
+                                <input type="text" class="form-control form-control-lg rounded-3" id="groupName" name="group_name" placeholder="Enter a group name">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="groupDescription" class="form-label fw-semibold">Description</label>
+                                <textarea class="form-control rounded-3" id="groupDescription" name="description" rows="4" placeholder="Briefly describe the purpose of this group"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <label class="form-label fw-semibold d-block mb-3">Choose Group Icon Color</label>
+                            <div class="d-flex flex-wrap gap-3">
+                                <input type="radio" class="btn-check" name="group_color" id="blue" autocomplete="off" checked>
+                                <label class="btn rounded-circle border shadow-sm" for="blue" style="width: 44px; height: 44px; background-color: #2563eb;"></label>
+
+                                <input type="radio" class="btn-check" name="group_color" id="green" autocomplete="off">
+                                <label class="btn rounded-circle border shadow-sm" for="green" style="width: 44px; height: 44px; background-color: #22c55e;"></label>
+
+                                <input type="radio" class="btn-check" name="group_color" id="purple" autocomplete="off">
+                                <label class="btn rounded-circle border shadow-sm" for="purple" style="width: 44px; height: 44px; background-color: #a855f7;"></label>
+
+                                <input type="radio" class="btn-check" name="group_color" id="orange" autocomplete="off">
+                                <label class="btn rounded-circle border shadow-sm" for="orange" style="width: 44px; height: 44px; background-color: #f97316;"></label>
+
+                                <input type="radio" class="btn-check" name="group_color" id="red" autocomplete="off">
+                                <label class="btn rounded-circle border shadow-sm" for="red" style="width: 44px; height: 44px; background-color: #ef4444;"></label>
+
+                                <input type="radio" class="btn-check" name="group_color" id="teal" autocomplete="off">
+                                <label class="btn rounded-circle border shadow-sm" for="teal" style="width: 44px; height: 44px; background-color: #14b8a6;"></label>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg px-4 rounded-3">Create Group</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 p-md-5">
+                    <h2 class="fw-bold mb-3">Group Creation Tips</h2>
+                    <ul class="mb-0 ps-3">
+                        <li class="mb-2">Use a clear group name so classmates can recognize it quickly.</li>
+                        <li class="mb-2">Match the course code and subject to the class the group is for.</li>
+                        <li class="mb-2">Write a short description explaining the group’s goals or study focus.</li>
+                        <li class="mb-2">Choose an icon color that helps your group stand out.</li>
+                        <li class="mb-0">Keep the group focused so members know what to expect before joining.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <button class="btn btn-primary">Create</button>
-</form>
-
+</div>
 {% endblock %}
