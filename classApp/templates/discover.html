@@ -3,38 +3,278 @@
 {% block content %}
 
 <link rel="stylesheet" href="{% static 'css/discover.css' %}">
+
+<style>
+    .discover-search-wrap .input-group-text,
+    .discover-search-wrap .form-control {
+        border: 1px solid #e9ecef !important;
+    }
+
+    .discover-search-wrap .form-control:focus {
+        box-shadow: none;
+        border-color: #0d6efd !important;
+    }
+
+    .filter-chip {
+        transition: all 0.2s ease;
+    }
+
+    .filter-chip.active {
+        background-color: #0d6efd;
+        color: #fff;
+        border-color: #0d6efd;
+    }
+
+    .group-col {
+        transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .group-col.hidden {
+        display: none;
+    }
+
+    .discover-card-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        height: 100%;
+    }
+
+    .discover-card {
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .discover-card:hover,
+    .discover-card:focus-within {
+        transform: translateY(-4px);
+        box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.12) !important;
+    }
+
+    .discover-card-link:focus {
+        outline: none;
+    }
+
+    .discover-card-link:focus .discover-card {
+        outline: 2px solid #0d6efd;
+        outline-offset: 3px;
+    }
+
+    .results-text {
+        min-height: 24px;
+    }
+</style>
+
 <div class="discover-page">
     <h1 class="fw-bold fs-1">Discover Groups</h1>
     <p>Find and join study groups for your courses.</p>
 
+    <div class="mb-4 discover-search-wrap">
+        <div class="input-group input-group-lg shadow-sm">
+            <span class="input-group-text bg-white rounded-start-4">
+                <i class="bi bi-search"></i>
+            </span>
+            <input
+                id="discoverSearch"
+                type="text"
+                class="form-control rounded-end-4"
+                placeholder="Search groups, courses, or topics"
+                aria-label="Search discover groups"
+            >
+        </div>
 
-    <!-- hard-coded example for presentation -->
-<div class="row g-4">
-    <div class="col-auto">
-        <div class="card discover-card shadow-sm border-0 rounded-4 h-100">
-            <div class="card-body d-flex flex-column p-4">
-                <div class="d-flex justify-content-between align-items-start mb-4">
-                    <div class="course-badge badge-blue">
-                        CS
+        <div class="d-flex flex-wrap gap-2 mt-3" id="filterChips">
+            <button type="button" class="btn btn-outline-secondary rounded-pill px-3 py-2 filter-chip active" data-filter="all">All Courses</button>
+            <button type="button" class="btn btn-outline-secondary rounded-pill px-3 py-2 filter-chip" data-filter="computer science">Computer Science</button>
+            <button type="button" class="btn btn-outline-secondary rounded-pill px-3 py-2 filter-chip" data-filter="chemistry">Chemistry</button>
+            <button type="button" class="btn btn-outline-secondary rounded-pill px-3 py-2 filter-chip" data-filter="mathematics">Mathematics</button>
+            <button type="button" class="btn btn-outline-secondary rounded-pill px-3 py-2 filter-chip" data-filter="physics">Physics</button>
+            <button type="button" class="btn btn-outline-secondary rounded-pill px-3 py-2 filter-chip" data-filter="history">History</button>
+        </div>
+
+        <p class="text-muted mt-3 mb-0 results-text" id="resultsText">Showing 6 groups</p>
+    </div>
+
+    <div class="row g-4" id="discoverGroupGrid">
+        <div class="col-md-6 col-lg-4 group-col" data-category="computer science" data-search="csci-1011 introduction to computer science computer science
+         programming coding algorithms">
+            <a href="{% url 'group_details' %}" class="discover-card-link" aria-label="View CSCI-1011 group details">
+                <div class="card discover-card shadow-sm border-0 rounded-4 h-100">
+                    <div class="card-body d-flex flex-column p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <div class="course-badge badge-blue">CS</div>
+                        </div>
+                        <h4 class="fw-bold mb-3">CSCI-1011</h4>
+                        <p class="card-title-text mb-3">Introduction to Computer Science</p>
+                        <p class="card-desc mb-4">
+                            An introduction to core computing ideas, basic programming, and problem-solving strategies for new computer science students.
+                        </p>
+                        <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                            <small class="text-muted"><i class="bi bi-people"></i> 10 Members</small>
+                            <span class="btn btn-light border rounded-3">View Group</span>
+                        </div>
                     </div>
                 </div>
-                <h4 class="fw-bold mb-3"> CSCI-1011</h4>
-                <p class="card-title-text mb-3">
-                   Introduction to Computer Science
-                </p>
-                <p class="card-desc mb-4">
-                    An introduction to the breadth of the field of computer science. Topics include an introduction to computer science as a career, overviews of various computer science areas and topics, and foundations of computational problem solving.
-                </p>
-                <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
-                    <small class="text-muted"><i class="bi bi-people"></i> 10 Members</small>
-                    <a href="{% url 'group_details'%}" class="btn btn-light border rounded-3">View Group</a>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4 group-col" data-category="chemistry" data-search="chem-1301 general chemistry chemistry atoms bonding reactions lab">
+            <a href="{% url 'group_details' %}" class="discover-card-link" aria-label="View CHEM-1301 group details">
+                <div class="card discover-card shadow-sm border-0 rounded-4 h-100">
+                    <div class="card-body d-flex flex-column p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <div class="course-badge badge-blue">CH</div>
+                        </div>
+                        <h4 class="fw-bold mb-3">CHEM-1301</h4>
+                        <p class="card-title-text mb-3">General Chemistry I</p>
+                        <p class="card-desc mb-4">
+                            A study group focused on atomic structure, chemical bonding, stoichiometry, and exam review practice.
+                        </p>
+                        <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                            <small class="text-muted"><i class="bi bi-people"></i> 14 Members</small>
+                            <span class="btn btn-light border rounded-3">View Group</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4 group-col" data-category="mathematics" data-search="math-2413 calculus mathematics derivatives integrals limits">
+            <a href="{% url 'group_details' %}" class="discover-card-link" aria-label="View MATH-2413 group details">
+                <div class="card discover-card shadow-sm border-0 rounded-4 h-100">
+                    <div class="card-body d-flex flex-column p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <div class="course-badge badge-blue">MA</div>
+                        </div>
+                        <h4 class="fw-bold mb-3">MATH-2413</h4>
+                        <p class="card-title-text mb-3">Calculus I</p>
+                        <p class="card-desc mb-4">
+                            Students meet here to review limits, derivatives, and early integration techniques before quizzes and exams.
+                        </p>
+                        <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                            <small class="text-muted"><i class="bi bi-people"></i> 9 Members</small>
+                            <span class="btn btn-light border rounded-3">View Group</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4 group-col" data-category="physics" data-search="phys-1401 physics mechanics motion force energy lab">
+            <a href="{% url 'group_details' %}" class="discover-card-link" aria-label="View PHYS-1401 group details">
+                <div class="card discover-card shadow-sm border-0 rounded-4 h-100">
+                    <div class="card-body d-flex flex-column p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <div class="course-badge badge-blue">PH</div>
+                        </div>
+                        <h4 class="fw-bold mb-3">PHYS-1401</h4>
+                        <p class="card-title-text mb-3">College Physics I</p>
+                        <p class="card-desc mb-4">
+                            A collaborative group for mechanics, force diagrams, motion problems, and physics lab prep.
+                        </p>
+                        <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                            <small class="text-muted"><i class="bi bi-people"></i> 12 Members</small>
+                            <span class="btn btn-light border rounded-3">View Group</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4 group-col" data-category="history" data-search="hist-1301 history world civilizations history essays readings discussion">
+            <a href="{% url 'group_details' %}" class="discover-card-link" aria-label="View HIST-1301 group details">
+                <div class="card discover-card shadow-sm border-0 rounded-4 h-100">
+                    <div class="card-body d-flex flex-column p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <div class="course-badge badge-blue">HI</div>
+                        </div>
+                        <h4 class="fw-bold mb-3">HIST-1301</h4>
+                        <p class="card-title-text mb-3">World History</p>
+                        <p class="card-desc mb-4">
+                            A reading and discussion group for major historical themes, essay prep, and timeline review.
+                        </p>
+                        <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                            <small class="text-muted"><i class="bi bi-people"></i> 8 Members</small>
+                            <span class="btn btn-light border rounded-3">View Group</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4 group-col" data-category="computer science" data-search="csci-3340 data structures computer science trees graphs sorting 
+        algorithms coding">
+            <a href="{% url 'group_details' %}" class="discover-card-link" aria-label="View CSCI-3340 group details">
+                <div class="card discover-card shadow-sm border-0 rounded-4 h-100">
+                    <div class="card-body d-flex flex-column p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <div class="course-badge badge-blue">CS</div>
+                        </div>
+                        <h4 class="fw-bold mb-3">CSCI-3340</h4>
+                        <p class="card-title-text mb-3">Data Structures</p>
+                        <p class="card-desc mb-4">
+                            Practice sessions for linked lists, stacks, queues, trees, and algorithm analysis with peers.
+                        </p>
+                        <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                            <small class="text-muted"><i class="bi bi-people"></i> 16 Members</small>
+                            <span class="btn btn-light border rounded-3">View Group</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
         </div>
     </div>
- </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('discoverSearch');
+        const chips = document.querySelectorAll('.filter-chip');
+        const groupCards = document.querySelectorAll('.group-col');
+        const resultsText = document.getElementById('resultsText');
+
+        let activeFilter = 'all';
+
+        function updateResults() {
+            const searchValue = searchInput.value.trim().toLowerCase();
+            let visibleCount = 0;
+
+            groupCards.forEach((card) => {
+                const category = card.dataset.category.toLowerCase();
+                const searchableText = card.dataset.search.toLowerCase();
+
+                const matchesFilter = activeFilter === 'all' || category === activeFilter;
+                const matchesSearch = searchableText.includes(searchValue);
+
+                if (matchesFilter && matchesSearch) {
+                    card.classList.remove('hidden');
+                    visibleCount += 1;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            resultsText.textContent = visibleCount === 1
+                ? 'Showing 1 group'
+                : `Showing ${visibleCount} groups`;
+
+            if (visibleCount === 0) {
+                resultsText.textContent = 'No groups match your search.';
+            }
+        }
+
+        chips.forEach((chip) => {
+            chip.addEventListener('click', function () {
+                chips.forEach((btn) => btn.classList.remove('active'));
+                this.classList.add('active');
+                activeFilter = this.dataset.filter.toLowerCase();
+                updateResults();
+            });
+        });
+
+        searchInput.addEventListener('input', updateResults);
+        updateResults();
+    });
+</script>
+
 {% endblock %}
-
-
