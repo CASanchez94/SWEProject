@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm 
 from django.contrib.auth.models import User
-from .forms import UserUpdateForm, ProfileUpdateForm, CustomRegistrationForm, FeedChatForm, ClassesForm
-from .models import Profile, Major, FeedChat, College
+from .forms import UserUpdateForm, ProfileUpdateForm, CustomRegistrationForm, FeedChatForm, ClassesForm, StudyGroupForm
+from .models import Profile, Major, FeedChat, College, StudyGroup
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -27,11 +27,28 @@ def home(request):
 
 @login_required
 def discover(request):
-	return render(request, 'discover.html',{})
+    groups = StudyGroup.objects.all().order_by('-created_at')
+    return render(request, 'discover.html',{
+        'groups': groups
+    })
 
 @login_required
 def create_group(request):
-	return render(request, 'create_group.html',{})
+    if request.method == 'POST':
+        form = StudyGroupForm(request.POST)
+        if form.is_valid():
+            group = form.save(commit=False)
+            group.creator = request.user
+            group.save()
+            group.members.add(request.user)  # Automatically add creator as a member
+            messages.success(request, "Group created successfully!")
+            return redirect('group_detail', group_id=group.id)
+    else:
+        form = StudyGroupForm()
+
+    return render(request, 'create_group.html',{
+        'form': form
+    })
 
 def register(request):
     if request.method == 'POST':
@@ -135,5 +152,9 @@ def profile_page(request):
     events = request.user.events_attending.all().order_by('date')
     return render(request, "profile_page.html", {"events": events})
 
-def group_details(request):
-    return render(request, 'group_details.html', {})
+@login_required
+def group_detail(request, group_id):
+    group = get_object_or_404(StudyGroup, id=group_id)
+    return render(request, 'group_details.html', {
+        'group': group
+    })

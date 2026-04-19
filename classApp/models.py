@@ -101,3 +101,25 @@ class FeedChat(models.Model):
 
     def __str__(self):
         return f"{self.user.username}: {self.content[:30]}"
+
+class StudyGroup(models.Model):
+    COLOR_CHOICES = [
+        ('#2563eb', 'Blue'),
+        ('#22c55e', 'Green'),
+        ('#a855f7', 'Purple'),
+        ('#f97316', 'Orange'),
+        ('#ef4444', 'Red'),
+        ('#14b8a6', 'Teal'),
+    ]
+
+    course_code = models.CharField(max_length=20)
+    course_subject = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    icon_color = models.CharField(max_length=20, choices=COLOR_CHOICES, default='#2563eb')
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_groups')
+    members = models.ManyToManyField(User, related_name='study_groups', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.course_code} - {self.name}"

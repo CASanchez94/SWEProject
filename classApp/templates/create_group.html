@@ -11,21 +11,22 @@
                     <h2 class="fw-bold mb-2">Group Creation</h2>
                     <p class="text-muted mb-4">Set up a new study group by filling out the details below.</p>
 
-                    <form>
+                    <form method="post">
+                        {% csrf_token %}
                         <div class="row g-4">
                             <div class="col-md-6">
                                 <label for="courseCode" class="form-label fw-semibold">Course Code</label>
-                                <input type="text" class="form-control form-control-lg rounded-3" id="courseCode" name="course_code" placeholder="e.g. CSCI 3340">
+                                <input type="text" class="form-control form-control-lg rounded-3" id="courseCode" name="course_code" placeholder="e.g. CSCI 3340" required>
                             </div>
 
                             <div class="col-md-6">
                                 <label for="courseSubject" class="form-label fw-semibold">Course Subject</label>
-                                <input type="text" class="form-control form-control-lg rounded-3" id="courseSubject" name="course_subject" placeholder="e.g. Software Engineering">
+                                <input type="text" class="form-control form-control-lg rounded-3" id="courseSubject" name="course_subject" placeholder="e.g. Software Engineering" required>
                             </div>
 
                             <div class="col-md-6">
                                 <label for="groupName" class="form-label fw-semibold">Group Name</label>
-                                <input type="text" class="form-control form-control-lg rounded-3" id="groupName" name="group_name" placeholder="Enter a group name">
+                                <input type="text" class="form-control form-control-lg rounded-3" id="groupName" name="name" placeholder="Enter a group name" required>
                             </div>
 
                             <div class="col-md-6">
@@ -37,22 +38,22 @@
                         <div class="mt-4">
                             <label class="form-label fw-semibold d-block mb-3">Choose Group Icon Color</label>
                             <div class="d-flex flex-wrap gap-3">
-                                <input type="radio" class="btn-check" name="group_color" id="blue" autocomplete="off" checked>
+                                <input type="radio" class="btn-check" name="icon_color" id="blue" value="#2563eb" autocomplete="off" checked>
                                 <label class="btn rounded-circle border shadow-sm" for="blue" style="width: 44px; height: 44px; background-color: #2563eb;"></label>
 
-                                <input type="radio" class="btn-check" name="group_color" id="green" autocomplete="off">
+                                <input type="radio" class="btn-check" name="icon_color" id="green" value="#22c55e" autocomplete="off">
                                 <label class="btn rounded-circle border shadow-sm" for="green" style="width: 44px; height: 44px; background-color: #22c55e;"></label>
 
-                                <input type="radio" class="btn-check" name="group_color" id="purple" autocomplete="off">
+                                <input type="radio" class="btn-check" name="icon_color" id="purple" value="#a855f7" autocomplete="off">
                                 <label class="btn rounded-circle border shadow-sm" for="purple" style="width: 44px; height: 44px; background-color: #a855f7;"></label>
 
-                                <input type="radio" class="btn-check" name="group_color" id="orange" autocomplete="off">
+                                <input type="radio" class="btn-check" name="icon_color" id="orange" value="#f97316" autocomplete="off">
                                 <label class="btn rounded-circle border shadow-sm" for="orange" style="width: 44px; height: 44px; background-color: #f97316;"></label>
 
-                                <input type="radio" class="btn-check" name="group_color" id="red" autocomplete="off">
+                                <input type="radio" class="btn-check" name="icon_color" id="red" value="#ef4444" autocomplete="off">
                                 <label class="btn rounded-circle border shadow-sm" for="red" style="width: 44px; height: 44px; background-color: #ef4444;"></label>
 
-                                <input type="radio" class="btn-check" name="group_color" id="teal" autocomplete="off">
+                                <input type="radio" class="btn-check" name="icon_color" id="teal" value="#14b8a6" autocomplete="off">
                                 <label class="btn rounded-circle border shadow-sm" for="teal" style="width: 44px; height: 44px; background-color: #14b8a6;"></label>
                             </div>
                         </div>
