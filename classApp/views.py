@@ -158,3 +158,27 @@ def group_detail(request, group_id):
     return render(request, 'group_details.html', {
         'group': group
     })
+
+@login_required
+def join_group(request, group_id):
+    group = get_object_or_404(StudyGroup, id=group_id)
+
+    if request.method == 'POST':
+        group.members.add(request.user)
+        messages.success(request, "You joined the group.")
+    
+    return redirect('group_detail', group_id=group.id)
+
+
+@login_required
+def leave_group(request, group_id):
+    group = get_object_or_404(StudyGroup, id=group_id)
+
+    if request.method == 'POST':
+        if request.user == group.creator:
+            messages.error(request, "The creator cannot leave their own group.")
+        else:
+            group.members.remove(request.user)
+            messages.success(request, "You left the group.")
+    
+    return redirect('group_detail', group_id=group.id)
