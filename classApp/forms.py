@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models	import User
 from django.core.exceptions import ValidationError
-from .models import Profile, GroupEvent, College, Major, FeedChat, Course
+from .models import Profile, GroupEvent, College, Major, FeedChat, Course, StudyGroup
 
 class UserUpdateForm(forms.ModelForm):
 	class Meta:
@@ -88,3 +88,8 @@ class FeedChatForm(forms.ModelForm):
         labels = {
             'content': ''
         }
+
+class StudyGroupForm(forms.ModelForm):
+    class Meta:
+        model = StudyGroup
+        fields = ['course_code', 'course_subject', 'name', 'description', 'icon_color']
