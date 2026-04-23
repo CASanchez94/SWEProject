@@ -1,18 +1,26 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm 
 from django.contrib.auth.models import User
-from .forms import UserUpdateForm, ProfileUpdateForm, CustomRegistrationForm, FeedChatForm, ClassesForm, StudyGroupForm
-from .models import Profile, Major, FeedChat, College, StudyGroup
+from .forms import UserUpdateForm, ProfileUpdateForm, CustomRegistrationForm, FeedChatForm, ClassesForm, StudyGroupForm, GroupEventForm, GroupPostForm
+from .models import Profile, Major, FeedChat, College, StudyGroup, GroupPost
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 @login_required
 def home(request):
     if request.method == 'POST':
-        form = FeedChatForm(request.POST)
+        form = FeedChatForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
             post.user = request.user
+            if post.resource_file and not post.resource_title:
+                post.resource_title = post.resource_file.name.split('/')[-1]
+
+            if post.resource_file and not post.resource_file_type:
+                filename = post.resource_file.name
+                if '.' in filename:
+                    post.resource_file_type = filename.split('.')[-1].lower()
+
             post.save()
             return redirect('home')
     else:
@@ -155,8 +163,40 @@ def profile_page(request):
 @login_required
 def group_detail(request, group_id):
     group = get_object_or_404(StudyGroup, id=group_id)
+    is_member = request.user in group.members.all()
+    posts = group.posts.select_related('user').order_by('-created_at')
+    resources = group.posts.filter(resource_file__isnull=False).select_related('user').order_by('-created_at')
+
+    if request.method == 'POST':
+        if not is_member:
+            messages.error(request, "You must join the group before posting.")
+            return redirect('group_detail', group_id=group.id)
+
+        form = GroupPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.group = group
+            post.user = request.user
+
+            if post.resource_file and not post.resource_title:
+                post.resource_title = post.resource_file.name.split('/')[-1]
+
+            if post.resource_file and not post.resource_file_type:
+                filename = post.resource_file.name
+                if '.' in filename:
+                    post.resource_file_type = filename.split('.')[-1].lower()
+
+            post.save()
+            messages.success(request, "Post shared with the group.")
+            return redirect('group_detail', group_id=group.id)
+    else:
+        form = GroupPostForm()
     return render(request, 'group_details.html', {
-        'group': group
+        'group': group,
+        'posts': posts,
+        'resources': resources,
+        'form': form,
+        'is_member': is_member
     })
 
 @login_required
@@ -182,3 +222,18 @@ def leave_group(request, group_id):
             messages.success(request, "You left the group.")
     
     return redirect('group_detail', group_id=group.id)
+
+@login_required
+def delete_group_post(request, post_id):
+    post = get_object_or_404(GroupPost, id=post_id)
+
+    if request.method == 'POST':
+        if request.user == post.user:
+            group_id = post.group.id
+            post.delete()
+            messages.success(request, "Post deleted.")
+            return redirect('group_detail', group_id=group_id)
+        else:
+            messages.error(request, "You can only delete your own posts.")
+
+    return redirect('group_detail', group_id=post.group.id)
