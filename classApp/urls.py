@@ -33,4 +33,5 @@ urlpatterns = [
     path('groups/<int:group_id>/', views.group_detail, name='group_detail'),
     path('groups/<int:group_id>/join/', views.join_group, name='join_group'),
     path('groups/<int:group_id>/leave/', views.leave_group, name='leave_group'),
+    path('group-posts/<int:post_id>/delete/', views.delete_group_post, name='delete_group_post'),
 ]

@@ -96,10 +96,14 @@ class GroupEvent(models.Model):
 
 class FeedChat(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="feed_messages")
-    content = models.TextField()
+    content = models.TextField(blank=True)
+    resource_file = models.FileField(upload_to='feed_resources/', blank=True, null=True)
+    resource_title = models.CharField(max_length=255, blank=True)
+    resource_file_type = models.CharField(max_length=50, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
+        preview = self.content[:30] if self.content else self.resource_title[:30]
         return f"{self.user.username}: {self.content[:30]}"
 
 class StudyGroup(models.Model):
@@ -123,3 +127,16 @@ class StudyGroup(models.Model):
 
     def __str__(self):
         return f"{self.course_code} - {self.name}"
+
+class GroupPost(models.Model):
+    group = models.ForeignKey(StudyGroup, on_delete=models.CASCADE, related_name='posts')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='group_posts')
+    content = models.TextField(blank=True)
+    resource_file = models.FileField(upload_to='group_resources/', blank=True, null=True)
+    resource_title = models.CharField(max_length=255, blank=True)
+    resource_file_type = models.CharField(max_length=50, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        preview = self.content[:30] if self.content else self.resource_title[:30]
+        return f"{self.user.username} in {self.group.name}: {self.content[:30]}"

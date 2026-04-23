@@ -6,9 +6,28 @@
 
 <div class="card mb-4 shadow-sm">
     <div class="card-body">
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }}
+
+            <div class="mb-3">
+                {{ form.content }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Upload Resource (optional)</label>
+                {{ form.resource_file }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Resource Title</label>
+                {{ form.resource_title }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">File Type</label>
+                {{ form.resource_file_type }}
+            </div>
+
             <div class="text-end">
                 <button type="submit" class="btn btn-primary">Post</button>
             </div>
@@ -28,14 +47,34 @@
                     <small class="text-muted">{{ post.created_at|date:"M d, Y g:i A" }}</small>
                 </div>
 
-                <p class="mb-0">{{ post.content }}</p>
+                {% if post.content %}
+    <p class="mb-3">{{ post.content }}</p>
+{% endif %}
+
+{% if post.resource_file %}
+    <div class="border rounded-3 p-3 d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-3">
+            <div class="rounded-3 p-2" style="background-color:#eff6ff">
+                <i class="bi bi-file-earmark-text text-primary fs-5"></i>
+            </div>
+            <div>
+                <p class="mb-0 fw-bold" style="font-size:0.95rem;">
+                    {{ post.resource_title|default:post.resource_file.name }}
+                </p>
+                <small class="text-muted">
+                    {{ post.resource_file_type|default:"File"|upper }}
+                </small>
             </div>
         </div>
-    {% endfor %}
-{% else %}
-    <div class="alert alert-light border">
-        No posts yet. Be the first one to post in the feed.
+        <a href="{{ post.resource_file.url }}" class="btn btn-light border rounded-3" download>Download</a>
     </div>
+{% endif %}
+
+        </div>
+    </div>
+{% endfor %}
+{% else %}
+    <p class="text-muted">No posts yet.</p>
 {% endif %}
 
 {% endblock %}

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models	import User
 from django.core.exceptions import ValidationError
-from .models import Profile, GroupEvent, College, Major, FeedChat, Course, StudyGroup
+from .models import Profile, GroupEvent, College, Major, FeedChat, Course, StudyGroup, GroupPost
 
 class UserUpdateForm(forms.ModelForm):
 	class Meta:
@@ -77,19 +77,74 @@ class CustomRegistrationForm(UserCreationForm):
 class FeedChatForm(forms.ModelForm):
     class Meta:
         model = FeedChat
-        fields = ['content']
+        fields = ['content', 'resource_file', 'resource_title', 'resource_file_type']
         widgets = {
             'content': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 3,
                 'placeholder': "What's on your mind? Share with your study group..."
-            })
+            }),
+            'resource_title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Resource title (optional)'
+            }),
+            'resource_file_type': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'File type (optional, e.g. pdf, docx, pptx)'
+            }),
         }
         labels = {
-            'content': ''
+            'content': '',
+            'resource_file': '',
+            'resource_title': '',
+            'resource_file_type': '',
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        content = cleaned_data.get('content')
+        resource_file = cleaned_data.get('resource_file')
+
+        if not content and not resource_file:
+            raise forms.ValidationError("Add text or upload a resource.")
+        return cleaned_data
 
 class StudyGroupForm(forms.ModelForm):
     class Meta:
         model = StudyGroup
         fields = ['course_code', 'course_subject', 'name', 'description', 'icon_color']
+        
+class GroupPostForm(forms.ModelForm):
+    class Meta:
+        model = GroupPost
+        fields = ['content', 'resource_file', 'resource_title', 'resource_file_type']
+        widgets = {
+            'content': forms.Textarea(attrs={
+                'class': 'form-control border-0 bg-transparent',
+                'rows': 3,
+                'placeholder': "What's on your mind? Share with your study group..."
+            }),
+            'resource_title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Resource title (optional)'
+            }),
+            'resource_file_type': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'File type (optional, e.g. pdf, docx, pptx)'
+            }),
+        }
+        labels = {
+            'content': '',
+            'resource_file': '',
+            'resource_title': '',
+            'resource_file_type': '',
+        }
+        
+    def clean(self):
+        cleaned_data = super().clean()
+        content = cleaned_data.get('content')
+        resource_file = cleaned_data.get('resource_file')
+
+        if not content and not resource_file:
+            raise forms.ValidationError("Add text or upload a resource.")
+        return cleaned_data
