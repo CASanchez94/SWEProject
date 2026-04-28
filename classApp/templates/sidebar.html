@@ -6,28 +6,29 @@
     </div>
 
     <ul class="nav nav-pills flex-column sidebar-links mb-4">
-        <li class="nav-item">
-            <a href="/" class="nav-link active">
-                <i class="bi bi-house-door"></i>
-                <span>Feed</span>
-            </a>
-        </li>
+    <li class="nav-item">
+        <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% else %}text-body-emphasis{% endif %}">
+            <i class="bi bi-house-door"></i>
+            <span>Feed</span>
+        </a>
+    </li>
 
-        <li class="nav-item">
-            <a href="/discover/" class="nav-link text-body-emphasis">
-                <i class="bi bi-compass"></i>
-                <span>Discover Groups</span>
-            </a>
-        </li>
+    <li class="nav-item">
+        <a href="{% url 'discover' %}" class="nav-link {% if request.resolver_match.url_name == 'discover' %}active{% else %}text-body-emphasis{% endif %}">
+            <i class="bi bi-compass"></i>
+            <span>Discover Groups</span>
+        </a>
+    </li>
 
-        <li class="nav-item">
-            <a href="{% url 'create_group' %}" class="nav-link text-body-emphasis">
-                <i class="bi bi-plus-square"></i>
-                <span>Create Group</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="{% url 'profile_page' %}" class="nav-link text-body-emphasis d-flex align-items-center gap-2">
+    <li class="nav-item">
+        <a href="{% url 'create_group' %}" class="nav-link {% if request.resolver_match.url_name == 'create_group' %}active{% else %}text-body-emphasis{% endif %}">
+            <i class="bi bi-plus-square"></i>
+            <span>Create Group</span>
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a href="{% url 'profile_page' %}" class="nav-link {% if request.resolver_match.url_name == 'profile_page' or request.resolver_match.url_name == 'profile' %}active{% else %}text-body-emphasis{% endif %} d-flex align-items-center gap-2">
                 {% if user.profile.profile_pic %}
                 <img src="{{ user.profile.profile_pic.url }}" 
                 width="22" height="22" 
