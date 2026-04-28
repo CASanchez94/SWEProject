@@ -30,22 +30,41 @@
 
                 <form method="post" id="classesForm">
                     {% csrf_token %}
-                    
+                    <input type="hidden" name="class_count" id="class_count" value="{{ class_forms|length }}">
+
                     <div class="mb-4">
-                        {% if form.classes %}
-                            <div style="max-height: 300px; overflow-y: auto;">
-                                {% for checkbox in form.classes %}
-                                    <div class="form-check mb-2">
-                                        {{ checkbox.tag }}
-                                        <label class="form-check-label" for="{{ checkbox.id_for_label }}">
-                                            {{ checkbox.choice_label }}
-                                        </label>
+                        <p class="text-muted small mb-3">Enter your current classes using the subject and section number. Add as many rows as you need.</p>
+                        <div id="classRows">
+                            {% for form in class_forms %}
+                                <div class="row g-3 mb-3 align-items-end class-row" data-index="{{ forloop.counter0 }}">
+                                    <div class="col-5">
+                                        <label class="form-label fw-semibold" for="{{ form.subject.id_for_label }}">Subject</label>
+                                        {{ form.subject }}
+                                        {% if form.subject.errors %}
+                                            <div class="text-danger small mt-1">{{ form.subject.errors|striptags }}</div>
+                                        {% endif %}
                                     </div>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            <p class="text-muted">No classes available.</p>
-                        {% endif %}
+                                    <div class="col-5">
+                                        <label class="form-label fw-semibold" for="{{ form.section_number.id_for_label }}">Section Number</label>
+                                        {{ form.section_number }}
+                                        {% if form.section_number.errors %}
+                                            <div class="text-danger small mt-1">{{ form.section_number.errors|striptags }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-2 d-flex align-items-end">
+                                        <button type="button" class="btn btn-outline-danger btn-sm remove-class-row">Remove</button>
+                                    </div>
+                                    {% if form.non_field_errors %}
+                                        <div class="col-12">
+                                            <div class="alert alert-danger py-2 mb-3">
+                                                {{ form.non_field_errors|striptags }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="btn btn-link p-0" id="addClassRow">+ Add another class</button>
                     </div>
 
                     <div class="d-grid gap-2">
@@ -53,6 +72,81 @@
                         <a href="{% url 'login' %}" class="btn btn-outline-secondary">Skip for now</a>
                     </div>
                 </form>
+
+                <script>
+                    (function() {
+                        const classRows = document.getElementById('classRows');
+                        const classCount = document.getElementById('class_count');
+                        const addButton = document.getElementById('addClassRow');
+
+                        function updateCount(value) {
+                            classCount.value = value;
+                        }
+
+                        function createClassRow(index) {
+                            const row = document.createElement('div');
+                            row.className = 'row g-3 mb-3 align-items-end class-row';
+                            row.dataset.index = index;
+                            row.innerHTML = `
+                                <div class="col-5">
+                                    <label class="form-label fw-semibold" for="id_class_${index}-subject">Subject</label>
+                                    <input type="text" name="class_${index}-subject" id="id_class_${index}-subject" class="form-control form-control-lg rounded-3" placeholder="e.g. CSCI or Software Engineering">
+                                </div>
+                                <div class="col-5">
+                                    <label class="form-label fw-semibold" for="id_class_${index}-section_number">Section Number</label>
+                                    <input type="text" name="class_${index}-section_number" id="id_class_${index}-section_number" class="form-control form-control-lg rounded-3" placeholder="e.g. 3340 or 01">
+                                </div>
+                                <div class="col-2 d-flex align-items-end">
+                                    <button type="button" class="btn btn-outline-danger btn-sm remove-class-row">Remove</button>
+                                </div>
+                            `;
+                            return row;
+                        }
+
+                        function addRow() {
+                            const nextIndex = parseInt(classCount.value, 10);
+                            classRows.appendChild(createClassRow(nextIndex));
+                            updateCount(nextIndex + 1);
+                        }
+
+                        function removeRow(button) {
+                            const row = button.closest('.class-row');
+                            if (!row) return;
+                            row.remove();
+                            const remainingRows = classRows.querySelectorAll('.class-row');
+                            updateCount(remainingRows.length);
+                            remainingRows.forEach((rowEl, idx) => {
+                                rowEl.dataset.index = idx;
+                                const subject = rowEl.querySelector('[name^="class_"][name$="-subject"]');
+                                const section = rowEl.querySelector('[name^="class_"][name$="-section_number"]');
+                                const subjectLabel = rowEl.querySelector('label[for]');
+                                const sectionLabel = rowEl.querySelectorAll('label[for]')[1];
+                                if (subject) {
+                                    subject.name = `class_${idx}-subject`;
+                                    subject.id = `id_class_${idx}-subject`;
+                                }
+                                if (section) {
+                                    section.name = `class_${idx}-section_number`;
+                                    section.id = `id_class_${idx}-section_number`;
+                                }
+                                if (subjectLabel) {
+                                    subjectLabel.htmlFor = `id_class_${idx}-subject`;
+                                }
+                                if (sectionLabel) {
+                                    sectionLabel.htmlFor = `id_class_${idx}-section_number`;
+                                }
+                            });
+                        }
+
+                        addButton.addEventListener('click', addRow);
+
+                        classRows.addEventListener('click', function(event) {
+                            if (event.target.matches('.remove-class-row')) {
+                                removeRow(event.target);
+                            }
+                        });
+                    })();
+                </script>
             </div>
         </div>
     </div>

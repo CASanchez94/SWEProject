@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm 
 from django.contrib.auth.models import User
-from .forms import UserUpdateForm, ProfileUpdateForm, CustomRegistrationForm, FeedChatForm, ClassesForm, StudyGroupForm, GroupEventForm, GroupPostForm
-from .models import Profile, Major, FeedChat, College, StudyGroup, GroupPost
+from .forms import UserUpdateForm, ProfileUpdateForm, CustomRegistrationForm, FeedChatForm, ClassEntryForm, StudyGroupForm, GroupEventForm, GroupPostForm
+from .models import Profile, Major, FeedChat, College, Course, StudyGroup, GroupPost
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -101,20 +101,47 @@ def register_step2(request, user_id):
         user = User.objects.get(id=user_id)
     except User.DoesNotExist:
         return redirect('register')
-    
+
     profile = user.profile
-    
+    class_forms = []
+    default_rows = 2
+
     if request.method == 'POST':
-        form = ClassesForm(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
+        class_count = int(request.POST.get('class_count', 0))
+        classes_to_add = []
+        form_valid = True
+
+        for i in range(class_count):
+            form = ClassEntryForm(request.POST, prefix=f'class_{i}')
+            class_forms.append(form)
+
+            if form.is_valid():
+                subject = form.cleaned_data['subject'].strip()
+                section_number = form.cleaned_data['section_number'].strip()
+                if subject or section_number:
+                    if not subject or not section_number:
+                        form.add_error(None, 'Both subject and section number are required for each class entry.')
+                        form_valid = False
+                    else:
+                        classes_to_add.append((subject, section_number))
+            else:
+                form_valid = False
+
+        if form_valid:
+            for subject, section_number in classes_to_add:
+                course_name = f"{subject} {section_number}"
+                course, _ = Course.objects.get_or_create(name=course_name)
+                profile.classes.add(course)
+
+            profile.save()
             messages.success(request, "Account setup complete! Welcome to Study App Name!")
             return redirect('login')
     else:
-        form = ClassesForm(instance=profile)
-    
+        for i in range(default_rows):
+            class_forms.append(ClassEntryForm(prefix=f'class_{i}'))
+
     return render(request, 'register_step2.html', {
-        'form': form,
+        'class_forms': class_forms,
         'user': user,
         'profile': profile
     })
