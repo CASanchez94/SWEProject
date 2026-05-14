@@ -42,23 +42,35 @@ def login_view(request):
         'form': form
     })
 
+
 @login_required
 def home(request):
     if request.method == 'POST':
         form = FeedChatForm(request.POST, request.FILES)
+        post_type = request.POST.get('post_type', 'text')
+
         if form.is_valid():
             post = form.save(commit=False)
             post.user = request.user
-            if post.resource_file and not post.resource_title:
-                post.resource_title = post.resource_file.name.split('/')[-1]
 
-            if post.resource_file and not post.resource_file_type:
-                filename = post.resource_file.name
-                if '.' in filename:
-                    post.resource_file_type = filename.split('.')[-1].lower()
+            if post_type == 'resource' and post.resource_file:
+                if not post.resource_title:
+                    post.resource_title = post.resource_file.name.split('/')[-1]
+
+                if not post.resource_file_type:
+                    filename = post.resource_file.name
+                    if '.' in filename:
+                        post.resource_file_type = filename.split('.')[-1].lower()
+
+            elif post_type == 'text':
+                post.resource_file = None
+                post.resource_title = ''
+                post.resource_file_type = ''
 
             post.save()
             return redirect('home')
+        else:
+            print(form.errors)
     else:
         form = FeedChatForm()
 

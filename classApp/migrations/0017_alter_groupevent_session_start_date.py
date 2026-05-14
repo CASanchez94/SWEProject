@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='groupevent',
             name='session_start_date',
-            field=models.DateTimeField(blank=True, null=True),
+            field=models.DateField(blank=True, null=True),
         ),
     ]

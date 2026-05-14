@@ -1,5 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
+<style>
+  .profile-group-badge {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+</style>
 
 <div class="container py-4">
   <h1 class="fw-bold fs-2 mb-4">My Profile</h1>
@@ -13,13 +23,18 @@
         <img src="{{ user.profile.profile_pic.url }}"
              alt="Profile Picture"
              class="rounded-circle"
-             width="100" height="100"
+             width="100"
+             height="100"
              style="object-fit: cover;">
       {% else %}
         <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
              style="width:100px; height:100px; flex-shrink:0;">
           <span class="text-white fw-bold" style="font-size: 2rem;">
-            {% if user.first_name and user.last_name %}{{ user.first_name|first|upper }}{{ user.last_name|first|upper }}{% else %}{{ user.username|first|upper }}{% endif %}
+            {% if user.first_name and user.last_name %}
+              {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+            {% else %}
+              {{ user.username|first|upper }}
+            {% endif %}
           </span>
         </div>
       {% endif %}
@@ -28,26 +43,32 @@
       <div>
         <h3 class="mb-1">{{ user.get_full_name|default:user.username }}</h3>
         <p class="text-muted mb-1">@{{ user.username }}</p>
+
         {% if user.profile.classification or user.profile.major %}
           <p class="text-muted mb-2">
-            {% if user.profile.classification %}{{ user.profile.get_classification_display }}{% endif %}
+            {% if user.profile.classification %}
+              {{ user.profile.get_classification_display }}
+            {% endif %}
+
             {% if user.profile.major %}
-              {% if user.profile.classification %} • {% endif %}{{ user.profile.major.name }}
+              {% if user.profile.classification %} • {% endif %}
+              {{ user.profile.major.name }}
             {% endif %}
           </p>
         {% endif %}
+
         {% if user.profile.college %}
           <p class="text-muted mb-2">
             <small><strong>College:</strong> {{ user.profile.college.name }}</small>
           </p>
         {% endif %}
+
         <p class="mb-0">{{ user.profile.bio }}</p>
       </div>
     </div>
 
     <hr>
 
-    <!-- Edit Profile -->
     <div class="mt-3">
       <a href="{% url 'profile' %}" class="btn btn-primary">Edit Profile</a>
     </div>
@@ -55,46 +76,127 @@
 
   <!-- Groups Section -->
   <h4 class="fw-bold mb-3">My Groups</h4>
+
   {% if user.study_groups.all %}
-    <div class="row">
+    <div class="row mb-4">
       {% for group in user.study_groups.all %}
         <div class="col-md-6 mb-3">
           <div class="card rounded-4 shadow-sm p-3 h-100">
-            <h5 class="fw-bold mb-2">{{ event.title }}</h5>
-            <p class="mb-1">
-              <strong>Schedule:</strong>
-              {{ event.session_start_date|date:"M d, Y" }} - {{ event.session_end_date|date:"M d, Y" }}
-              <br>
-              <strong>Time:</strong>
-              {{ event.session_start_time|time:"g:i A" }} - {{ event.session_end_time|time:"g:i A" }}
-              <br>
-              <strong>Days:</strong>
-              {{ event.meeting_days }}
-            </p>
-            <p class="mb-0">
-              <strong>Location:</strong> {{ event.location }}
-            </p>
+
             <div class="d-flex align-items-start gap-3 mb-2">
-              <div class="course-badge text-white rounded-2" style="background-color: {{ group.icon_color }}; width:40px; height:40px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              <div class="course-badge text-white rounded-2 profile-group-badge"
+                  data-group-color="{{ group.icon_color }}">
                 {{ group.course_code|slice:":2"|upper }}
               </div>
+
               <div>
                 <h5 class="fw-bold mb-0">{{ group.course_code }}</h5>
                 <p class="mb-0 text-muted small">{{ group.name }}</p>
               </div>
             </div>
+
             <p class="mb-2 small">{{ group.description|default:"No description." }}</p>
-            <a href="{% url 'group_detail' group.id %}" class="btn btn-sm btn-outline-primary">View Group</a>
+
+            <p class="mb-2 small text-muted">
+              <strong>Members:</strong> {{ group.members.count }}
+            </p>
+
+            <a href="{% url 'group_detail' group.id %}" class="btn btn-sm btn-outline-primary mt-auto">
+              View Group
+            </a>
+
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card rounded-4 shadow-sm p-4 text-center text-muted mb-4">
+      <p class="mb-0">
+        You haven't joined any groups yet.
+        <a href="{% url 'discover' %}">Discover groups</a>
+      </p>
+    </div>
+  {% endif %}
+
+  <!-- Study Sessions Section -->
+  <h4 class="fw-bold mb-3">My Study Sessions</h4>
+
+  {% if events %}
+    <div class="row">
+      {% for event in events %}
+        <div class="col-md-6 mb-3">
+          <div class="card rounded-4 shadow-sm p-3 h-100">
+
+            <div class="d-flex align-items-start gap-3 mb-3">
+              <div class="rounded-3 text-white d-flex flex-column align-items-center justify-content-center"
+                   style="width:58px; height:64px; background: linear-gradient(135deg, #7c3aed, #a855f7); flex-shrink:0;">
+                <span class="fw-bold fs-5 lh-1">
+                  {{ event.session_start_date|date:"d" }}
+                </span>
+                <small>{{ event.session_start_date|date:"M" }}</small>
+              </div>
+
+              <div>
+                <h5 class="fw-bold mb-1">{{ event.title }}</h5>
+
+                {% if event.group %}
+                  <p class="text-muted small mb-0">
+                    {{ event.group.course_code }} • {{ event.group.name }}
+                  </p>
+                {% endif %}
+              </div>
+            </div>
+
+            {% if event.description %}
+              <p class="mb-2 small">{{ event.description }}</p>
+            {% endif %}
+
+            <p class="mb-2 small text-muted">
+              <strong>Schedule:</strong>
+              {{ event.session_start_date|date:"M d, Y" }} - {{ event.session_end_date|date:"M d, Y" }}
+              <br>
+
+              <strong>Time:</strong>
+              {{ event.session_start_time|time:"g:i A" }} - {{ event.session_end_time|time:"g:i A" }}
+              <br>
+
+              <strong>Days:</strong>
+              {{ event.meeting_days }}
+            </p>
+
+            {% if event.location %}
+              <p class="mb-2 small">
+                <strong>Location:</strong> {{ event.location }}
+              </p>
+            {% endif %}
+
+            <p class="mb-2 small text-muted">
+              <strong>Attending:</strong> {{ event.attendees.count }}
+            </p>
+
+            {% if event.group %}
+              <a href="{% url 'group_detail' event.group.id %}" class="btn btn-sm btn-outline-primary mt-auto">
+                View Group
+              </a>
+            {% endif %}
+
           </div>
         </div>
       {% endfor %}
     </div>
   {% else %}
     <div class="card rounded-4 shadow-sm p-4 text-center text-muted">
-      <p class="mb-0">You haven't joined any groups yet. <a href="{% url 'discover' %}">Discover groups</a></p>
+      <p class="mb-0">You are not attending any study sessions yet.</p>
     </div>
   {% endif %}
 
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('[data-group-color]').forEach(function (el) {
+    el.style.backgroundColor = el.dataset.groupColor;
+  });
+});
+</script>
 
 {% endblock %}

@@ -14,17 +14,24 @@ class ProfileUpdateForm(forms.ModelForm):
 		model = Profile
 		fields = ['profile_pic','bio','college','major','classification']
 
-class ClassesForm(forms.ModelForm):
-	classes = forms.ModelMultipleChoiceField(
-		queryset=Course.objects.all().order_by('name'),
-		widget=forms.CheckboxSelectMultiple(),
-		required=False,
-		label="Select your classes (optional)"
-	)
-	
-	class Meta:
-		model = Profile
-		fields = ['classes']
+class ClassesForm(forms.Form):
+    subject = forms.CharField(
+        max_length=20,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control form-control-lg rounded-3',
+            'placeholder': 'e.g. CSCI'
+        })
+    )
+
+    section_number = forms.CharField(
+        max_length=20,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control form-control-lg rounded-3',
+            'placeholder': 'e.g. 3340'
+        })
+    )
 
 class GroupEventForm(forms.ModelForm):
     DAYS_OF_WEEK = [
@@ -113,6 +120,15 @@ class GroupEventForm(forms.ModelForm):
             raise forms.ValidationError("Select at least one meeting day.")
 
         return cleaned_data
+    
+    def save(self, commit=True):
+        event = super().save(commit=False)
+        event.meeting_days = ','.join(self.cleaned_data.get('meeting_days', []))
+
+        if commit:
+            event.save()
+
+        return event    
 
 class CustomRegistrationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True)
@@ -227,3 +243,4 @@ class GroupPostForm(forms.ModelForm):
         if not content and not resource_file:
             raise forms.ValidationError("Add text or upload a resource.")
         return cleaned_data
+
