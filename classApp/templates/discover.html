@@ -89,6 +89,7 @@
             <button type="button" class="btn btn-outline-secondary rounded-pill px-3 py-2 filter-chip" data-filter="mathematics">Mathematics</button>
             <button type="button" class="btn btn-outline-secondary rounded-pill px-3 py-2 filter-chip" data-filter="physics">Physics</button>
             <button type="button" class="btn btn-outline-secondary rounded-pill px-3 py-2 filter-chip" data-filter="history">History</button>
+            <button type="button" class="btn btn-outline-secondary rounded-pill px-3 py-2 filter-chip" data-filter="other">Other</button>
         </div>
 
         <p class="text-muted mt-3 mb-0 results-text" id="resultsText">
@@ -158,6 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const resultsText = document.getElementById('resultsText');
 
     let activeFilter = 'all';
+    const otherCategories = ['computer science', 'chemistry', 'mathematics', 'physics', 'history'];
 
     function updateResults() {
         const searchValue = searchInput.value.trim().toLowerCase();
@@ -167,7 +169,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const category = card.dataset.category.toLowerCase();
             const searchableText = card.dataset.search.toLowerCase();
 
-            const matchesFilter = activeFilter === 'all' || category.includes(activeFilter);
+            const matchesFilter = activeFilter === 'all'
+                || (activeFilter === 'other' && !otherCategories.includes(category))
+                || category.includes(activeFilter);
             const matchesSearch = searchableText.includes(searchValue);
 
             if (matchesFilter && matchesSearch) {

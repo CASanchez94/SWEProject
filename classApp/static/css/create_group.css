@@ -1,0 +1,13 @@
+.btn-check:checked+.color-btn {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 3px #fff, 0 0 0 5px currentColor !important;
+    outline: none;
+}
+
+.color-btn {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.color-btn:hover {
+    transform: scale(1.1);
+}

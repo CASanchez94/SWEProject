@@ -19,61 +19,65 @@
         <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
              style="width:100px; height:100px; flex-shrink:0;">
           <span class="text-white fw-bold" style="font-size: 2rem;">
-            {{ user.username|first|upper }}
+            {% if user.first_name and user.last_name %}{{ user.first_name|first|upper }}{{ user.last_name|first|upper }}{% else %}{{ user.username|first|upper }}{% endif %}
           </span>
         </div>
       {% endif %}
 
-      <!-- Name, Email, Bio -->
+      <!-- Name, Username, Year, Major, Bio -->
       <div>
-        <h3 class="mb-1">{{ user.username }}</h3>
-        <p class="text-muted mb-1">{{ user.email }}</p>
+        <h3 class="mb-1">{{ user.get_full_name|default:user.username }}</h3>
+        <p class="text-muted mb-1">@{{ user.username }}</p>
+        {% if user.profile.classification or user.profile.major %}
+          <p class="text-muted mb-2">
+            {% if user.profile.classification %}{{ user.profile.get_classification_display }}{% endif %}
+            {% if user.profile.major %}
+              {% if user.profile.classification %} • {% endif %}{{ user.profile.major.name }}
+            {% endif %}
+          </p>
+        {% endif %}
+        {% if user.profile.college %}
+          <p class="text-muted mb-2">
+            <small><strong>College:</strong> {{ user.profile.college.name }}</small>
+          </p>
+        {% endif %}
         <p class="mb-0">{{ user.profile.bio }}</p>
       </div>
     </div>
 
     <hr>
 
-    <!-- College and Major -->
-    <div class="row mt-1">
-      <div class="col-md-6">
-        <p class="mb-1">
-          <strong>College:</strong> {{ user.profile.college.name|default:"Not set" }}
-        </p>
-      </div>
-      <div class="col-md-6">
-        <p class="mb-1">
-          <strong>Major:</strong> {{ user.profile.major.name|default:"Not set" }}
-        </p>
-      </div>
-    </div>
-  <!-- Edit Profile -->
+    <!-- Edit Profile -->
     <div class="mt-3">
       <a href="{% url 'profile' %}" class="btn btn-primary">Edit Profile</a>
     </div>
   </div>
 
-  <!-- Events Section -->
-  <h4 class="fw-bold mb-3">My Events</h4>
-  {% if events %}
+  <!-- Groups Section -->
+  <h4 class="fw-bold mb-3">My Groups</h4>
+  {% if user.study_groups.all %}
     <div class="row">
-      {% for event in events %}
+      {% for group in user.study_groups.all %}
         <div class="col-md-6 mb-3">
           <div class="card rounded-4 shadow-sm p-3 h-100">
-            <h5 class="fw-bold mb-2">{{ event.title }}</h5>
-            <p class="mb-1">
-              <strong>Date:</strong> {{ event.date|date:"M d, Y" }}
-            </p>
-            <p class="mb-0">
-              <strong>Location:</strong> {{ event.location }}
-            </p>
+            <div class="d-flex align-items-start gap-3 mb-2">
+              <div class="course-badge text-white rounded-2" style="background-color: {{ group.icon_color }}; width:40px; height:40px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                {{ group.course_code|slice:":2"|upper }}
+              </div>
+              <div>
+                <h5 class="fw-bold mb-0">{{ group.course_code }}</h5>
+                <p class="mb-0 text-muted small">{{ group.name }}</p>
+              </div>
+            </div>
+            <p class="mb-2 small">{{ group.description|default:"No description." }}</p>
+            <a href="{% url 'group_detail' group.id %}" class="btn btn-sm btn-outline-primary">View Group</a>
           </div>
         </div>
       {% endfor %}
     </div>
   {% else %}
     <div class="card rounded-4 shadow-sm p-4 text-center text-muted">
-      <p class="mb-0">You're not attending any events yet.</p>
+      <p class="mb-0">You haven't joined any groups yet. <a href="{% url 'discover' %}">Discover groups</a></p>
     </div>
   {% endif %}
 
