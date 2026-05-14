@@ -27,9 +27,35 @@ class ClassesForm(forms.ModelForm):
 		fields = ['classes']
 
 class GroupEventForm(forms.ModelForm):
+    DAYS_OF_WEEK = [
+        ('MO', 'Monday'),
+        ('TU', 'Tuesday'),
+        ('WE', 'Wednesday'),
+        ('TH', 'Thursday'),
+        ('FR', 'Friday'),
+        ('SA', 'Saturday'),
+        ('SU', 'Sunday'),
+    ]
+
+    meeting_days = forms.MultipleChoiceField(
+        choices=DAYS_OF_WEEK,
+        widget=forms.CheckboxSelectMultiple,
+        required=True,
+        label="Meeting Days"
+    )
+
     class Meta:
         model = GroupEvent
-        fields = ['title', 'description', 'start_time', 'end_time', 'location', 'attendees']
+        fields = [
+            'title',
+            'description',
+            'session_start_date',
+            'session_end_date',
+            'meeting_days',
+            'session_start_time',
+            'session_end_time',
+            'location',
+        ]
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -38,58 +64,55 @@ class GroupEventForm(forms.ModelForm):
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 3,
-                'placeholder': 'What will this study session cover?'
+                'placeholder': "What will this study session cover?"
             }),
-            'start_time': forms.DateTimeInput(attrs={
+            'session_start_date': forms.DateInput(attrs={
                 'class': 'form-control',
-                'type': 'datetime-local'
+                'type': 'date'
             }),
-            'end_time': forms.DateTimeInput(attrs={
+            'session_end_date': forms.DateInput(attrs={
                 'class': 'form-control',
-                'type': 'datetime-local'
+                'type': 'date'
+            }),
+            'session_start_time': forms.TimeInput(attrs={
+                'class': 'form-control',
+                'type': 'time'
+            }),
+            'session_end_time': forms.TimeInput(attrs={
+                'class': 'form-control',
+                'type': 'time'
             }),
             'location': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Library, Zoom, classroom, etc.'
             }),
-            'attendees': forms.CheckboxSelectMultiple(),
         }
 
     def __init__(self, *args, group=None, **kwargs):
         super().__init__(*args, **kwargs)
 
-        if group:
-            self.fields['attendees'].queryset = group.members.all().order_by('username')
+        if self.instance and self.instance.meeting_days:
+            self.fields['meeting_days'].initial = self.instance.meeting_days.split(',')
 
     def clean(self):
         cleaned_data = super().clean()
-        start_time = cleaned_data.get('start_time')
-        end_time = cleaned_data.get('end_time')
+
+        start_date = cleaned_data.get('session_start_date')
+        end_date = cleaned_data.get('session_end_date')
+        start_time = cleaned_data.get('session_start_time')
+        end_time = cleaned_data.get('session_end_time')
+        meeting_days = cleaned_data.get('meeting_days')
+
+        if start_date and end_date and end_date < start_date:
+            raise forms.ValidationError("End date must be after the start date.")
 
         if start_time and end_time and end_time <= start_time:
-            raise forms.ValidationError("End time must be after start time.")
+            raise forms.ValidationError("End time must be after the start time.")
+
+        if not meeting_days:
+            raise forms.ValidationError("Select at least one meeting day.")
 
         return cleaned_data
-
-class ClassEntryForm(forms.Form):
-	subject = forms.CharField(
-		max_length=50,
-		required=False,
-		label="Subject",
-		widget=forms.TextInput(attrs={
-			'class': 'form-control form-control-lg rounded-3',
-			'placeholder': 'e.g. CSCI or Software Engineering'
-		})
-	)
-	section_number = forms.CharField(
-		max_length=20,
-		required=False,
-		label="Section Number",
-		widget=forms.TextInput(attrs={
-			'class': 'form-control form-control-lg rounded-3',
-			'placeholder': 'e.g. 3340 or 01'
-		})
-	)
 
 class CustomRegistrationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True)

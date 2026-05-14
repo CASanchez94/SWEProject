@@ -97,8 +97,11 @@ class GroupEvent(models.Model):
 
     title = models.CharField(max_length=255) # title of the event
     description = models.TextField(blank=True) # description of the event
-    start_time = models.DateTimeField(null=True) # when the event starts
-    end_time = models.DateTimeField(null=True) # when the event ends
+    session_start_date = models.DateField(null=True, blank=True)
+    session_end_date = models.DateField(null=True, blank=True)
+    meeting_days = models.CharField(max_length=50, blank=True)
+    session_start_time = models.TimeField(null=True, blank=True)
+    session_end_time = models.TimeField(null=True, blank=True)
     location = models.CharField(max_length=255, blank=True) # where the event will take place (can be virtual or physical)
 
     attendees = models.ManyToManyField(
@@ -113,7 +116,7 @@ class GroupEvent(models.Model):
     created_at = models.DateTimeField(auto_now_add=True) 
 
     class Meta:
-        ordering = ['start_time']
+        ordering = ['session_start_date', 'session_start_time']
 
     def __str__(self):    
         return self.title

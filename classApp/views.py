@@ -226,7 +226,7 @@ def profile(request):
 
 @login_required
 def profile_page(request):
-    events = request.user.events_attending.all().order_by('start_time')
+    events = request.user.events_attending.all().order_by('session_start_date', 'session_start_time')
     return render(request, "profile_page.html", {"events": events})
 @login_required
 def group_detail(request, group_id):
@@ -240,7 +240,7 @@ def group_detail(request, group_id):
         resource_file=""
     ).select_related('user').order_by('-created_at')
 
-    events = group.events.select_related('creator').prefetch_related('attendees').order_by('start_time')
+    events = group.events.select_related('creator').prefetch_related('attendees').order_by('session_start_date', 'session_start_time')
 
     post_form = GroupPostForm()
     event_form = GroupEventForm(group=group)
