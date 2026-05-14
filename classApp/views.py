@@ -1,10 +1,52 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.forms import UserCreationForm 
-from django.contrib.auth.models import User
-from .forms import UserUpdateForm, ProfileUpdateForm, CustomRegistrationForm, FeedChatForm, ClassEntryForm, StudyGroupForm, GroupEventForm, GroupPostForm
-from .models import Profile, Major, FeedChat, College, Course, StudyGroup, GroupPost
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.models import User
+
+from .models import Profile, Major, FeedChat, College, Course, StudyGroup, GroupPost
+from .forms import (
+    UserUpdateForm, ProfileUpdateForm, CustomRegistrationForm,
+    FeedChatForm, ClassEntryForm, StudyGroupForm,
+    GroupEventForm, GroupPostForm
+)
+
+def login_view(request):
+
+    if request.method == 'POST':
+
+        form = AuthenticationForm(request, data=request.POST)
+
+        if form.is_valid():
+
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+
+            user = authenticate(
+                request,
+                username=username,
+                password=password
+            )
+
+            if user is not None:
+                login(request, user)
+                return redirect('home')
+
+        messages.error(request, "Invalid username or password.")
+
+    else:
+        form = AuthenticationForm()
+
+    return render(request, 'login.html', {
+        'form': form
+    })
+
+
+
+
+
+
 
 @login_required
 def home(request):
@@ -221,7 +263,10 @@ def group_detail(request, group_id):
 
             post.save()
             messages.success(request, "Post shared with the group.")
+            print("Post Success")
             return redirect('group_detail', group_id=group.id)
+        else:
+            print(form.errors)
     else:
         form = GroupPostForm()
 

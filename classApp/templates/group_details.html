@@ -93,10 +93,13 @@
 
                     <div class="post-section" id="textSection"></div>
 
-                    <div class="post-section d-none" id="resourceSection">
-                        <div class="mb-2">{{ form.resource_file }}</div>
-                        <div class="mb-2">{{ form.resource_title }}</div>
-                    </div>
+            <!-- RESOURCE -->
+            <div class="post-section d-none" id="resourceSection">
+                <!--<div class="mb-2">{{ form.content }}</div> -->
+                <div class="mb-2">{{ form.resource_file }}</div>
+                <div class="mb-2">{{ form.resource_title }}</div>
+                <div class="mb-2">{{ form.resource_file_type }}</div>
+            </div>
 
                     <div class="post-section d-none" id="sessionSection">
                         <p class="text-muted">Study sessions coming later.</p>
@@ -136,40 +139,19 @@
                             <p class="mb-3">{{ post.content }}</p>
                         {% endif %}
 
-                        {% if post.resource_file %}
-                            <div class="border rounded-3 p-3 d-flex align-items-center justify-content-between">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="rounded-3 p-2" style="background-color:#eff6ff">
-                                        {% with ext=post.resource_file_type|default:post.resource_file|file_extension %}
-                                            {% if ext == "PDF" %}
-                                                <i class="bi bi-file-earmark-pdf text-danger fs-5"></i>
-                                            {% elif ext == "DOCX" or ext == "DOC" %}
-                                                <i class="bi bi-file-earmark-word text-primary fs-5"></i>
-                                            {% elif ext == "PPTX" or ext == "PPT" %}
-                                                <i class="bi bi-file-earmark-ppt text-warning fs-5"></i>
-                                            {% elif ext == "XLSX" or ext == "XLS" %}
-                                                <i class="bi bi-file-earmark-excel text-success fs-5"></i>
-                                            {% elif ext == "JPG" or ext == "JPEG" or ext == "PNG" %}
-                                                <i class="bi bi-file-earmark-image text-info fs-5"></i>
-                                            {% elif ext == "ZIP" or ext == "RAR" %}
-                                                <i class="bi bi-file-earmark-zip text-secondary fs-5"></i>
-                                            {% else %}
-                                                <i class="bi bi-file-earmark-text text-primary fs-5"></i>
-                                            {% endif %}
-                                        {% endwith %}
-                                    </div>
-                                    <div>
-                                        <p class="mb-0 fw-bold" style="font-size:0.95rem;">
-                                            {{ post.resource_title|default:"Untitled Resource" }}
-                                        </p>
-                                        <small class="text-muted">
-                                            {% if post.resource_file_type %}
-                                                {{ post.resource_file_type|upper }}
-                                            {% else %}
-                                                {{ post.resource_file|file_extension }}
-                                            {% endif %}
-                                        </small>
-                                    </div>
+                    {% if post.resource_file and post.resource_file.name %}
+                        <div class="border rounded-3 p-3 d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-3 p-2" style="background-color:#eff6ff">
+                                    <i class="bi bi-file-earmark-text text-primary fs-5"></i>
+                                </div>
+                                <div>
+                                    <p class="mb-0 fw-bold" style="font-size:0.95rem;">
+                                        {{ post.resource_title|default:post.resource_file.name }}
+                                    </p>
+                                    <small class="text-muted">
+                                        {{ post.resource_file_type|default:"File"|upper }}
+                                    </small>
                                 </div>
                                 <a href="{{ post.resource_file.url }}" class="btn btn-light border rounded-3" download>
                                     <i class="bi bi-download"></i> Download
@@ -199,7 +181,7 @@
 <!-- RESOURCES TAB -->
 <div id="resourcesTab" class="group-tab-content d-none">
     {% if is_member %}
-        {% if resources %}
+        {% if resource.resource_file and resource.resource_file.name %}
             {% for resource in resources %}
                 <div class="card border-0 shadow-sm rounded-4 mb-3">
                     <div class="card-body p-4 d-flex align-items-center justify-content-between">
