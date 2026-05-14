@@ -84,8 +84,13 @@
           <button type="button" class="flex-fill btn btn-light active post-type-btn" data-type="text">
             Text
           </button>
+
           <button type="button" class="flex-fill btn btn-light post-type-btn" data-type="resource">
             Resource
+          </button>
+
+          <button type="button" class="flex-fill btn btn-light post-type-btn" data-type="session">
+            Study Session
           </button>
         </div>
 
@@ -93,7 +98,7 @@
           {% csrf_token %}
           <input type="hidden" name="post_type" id="postTypeInput" value="text">
 
-          <div class="mb-3">
+          <div class="post-section" id="textSection">
             {{ form.content }}
           </div>
 
@@ -114,9 +119,26 @@
             </div>
           </div>
 
+          <div class="post-section d-none" id="sessionSection">
+            <div class="border rounded-3 p-3 bg-light">
+              <p class="fw-semibold mb-1">Create a study session</p>
+              <p class="text-muted small mb-3">
+                Schedule a meeting for this group using the study session form.
+              </p>
+
+              <button type="button"
+                      class="btn btn-primary rounded-3"
+                      id="openSessionFromPost"
+                      data-bs-toggle="modal"
+                      data-bs-target="#createSessionModal">
+                <i class="bi bi-calendar-plus"></i> Create Session
+              </button>
+            </div>
+          </div>
+
           <div class="text-end mt-3">
             <button type="button" id="cancelPost" class="btn btn-light border">Cancel</button>
-            <button type="submit" class="btn btn-primary">Post</button>
+            <button type="submit" id="submitGroupPost" class="btn btn-primary">Post</button>
           </div>
         </form>
       </div>
@@ -608,8 +630,15 @@ document.addEventListener('DOMContentLoaded', function () {
       tabButtons.forEach(btn => btn.classList.remove('active'));
       this.classList.add('active');
 
-      Object.values(tabContents).forEach(section => section.classList.add('d-none'));
-      tabContents[this.dataset.tab].classList.remove('d-none');
+      Object.values(tabContents).forEach(section => {
+        if (section) {
+          section.classList.add('d-none');
+        }
+      });
+
+      if (tabContents[this.dataset.tab]) {
+        tabContents[this.dataset.tab].classList.remove('d-none');
+      }
     });
   });
 
@@ -630,27 +659,55 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   const typeButtons = document.querySelectorAll('.post-type-btn');
-  const resourceSection = document.getElementById('resourceSection');
+  const sections = {
+    text: document.getElementById('textSection'),
+    resource: document.getElementById('resourceSection'),
+    session: document.getElementById('sessionSection')
+  };
   const postTypeInput = document.getElementById('postTypeInput');
+  const submitGroupPost = document.getElementById('submitGroupPost');
+  const openSessionFromPost = document.getElementById('openSessionFromPost');
 
   typeButtons.forEach(btn => {
     btn.addEventListener('click', function () {
       typeButtons.forEach(b => b.classList.remove('active'));
       this.classList.add('active');
 
+      const selectedType = this.dataset.type;
+
       if (postTypeInput) {
-        postTypeInput.value = this.dataset.type;
+        postTypeInput.value = selectedType;
       }
 
-      if (resourceSection) {
-        if (this.dataset.type === 'resource') {
-          resourceSection.classList.remove('d-none');
+      Object.values(sections).forEach(section => {
+        if (section) {
+          section.classList.add('d-none');
+        }
+      });
+
+      if (sections[selectedType]) {
+        sections[selectedType].classList.remove('d-none');
+      }
+
+      if (submitGroupPost) {
+        if (selectedType === 'session') {
+          submitGroupPost.classList.add('d-none');
         } else {
-          resourceSection.classList.add('d-none');
+          submitGroupPost.classList.remove('d-none');
         }
       }
     });
   });
+
+  if (openSessionFromPost) {
+    openSessionFromPost.addEventListener('click', function () {
+      const sessionsTabButton = document.querySelector('.group-tab-btn[data-tab="sessions"]');
+
+      if (sessionsTabButton) {
+        sessionsTabButton.click();
+      }
+    });
+  }
 });
 </script>
 
