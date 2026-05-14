@@ -4,3 +4,5 @@ Django
 django-crispy-forms
 pillow
 sqlparse
+google-api-python-client
+google-auth

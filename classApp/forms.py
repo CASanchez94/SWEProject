@@ -27,13 +27,49 @@ class ClassesForm(forms.ModelForm):
 		fields = ['classes']
 
 class GroupEventForm(forms.ModelForm):
-	class Meta:
-		model = GroupEvent
-		fields = ['title', 'description', 'date', 'location', 'attendees']
-		widgets = {
-			# This allows you to select multiple users at once 
-			'attendees': forms.CheckboxSelectMultiple(),
-		}
+    class Meta:
+        model = GroupEvent
+        fields = ['title', 'description', 'start_time', 'end_time', 'location', 'attendees']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Session title'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'What will this study session cover?'
+            }),
+            'start_time': forms.DateTimeInput(attrs={
+                'class': 'form-control',
+                'type': 'datetime-local'
+            }),
+            'end_time': forms.DateTimeInput(attrs={
+                'class': 'form-control',
+                'type': 'datetime-local'
+            }),
+            'location': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Library, Zoom, classroom, etc.'
+            }),
+            'attendees': forms.CheckboxSelectMultiple(),
+        }
+
+    def __init__(self, *args, group=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if group:
+            self.fields['attendees'].queryset = group.members.all().order_by('username')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_time = cleaned_data.get('start_time')
+        end_time = cleaned_data.get('end_time')
+
+        if start_time and end_time and end_time <= start_time:
+            raise forms.ValidationError("End time must be after start time.")
+
+        return cleaned_data
 
 class CustomRegistrationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True)
@@ -139,7 +175,7 @@ class GroupPostForm(forms.ModelForm):
             'resource_title': '',
             'resource_file_type': '',
         }
-        
+
     def clean(self):
         cleaned_data = super().clean()
         content = cleaned_data.get('content')

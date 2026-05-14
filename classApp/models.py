@@ -82,16 +82,40 @@ class Profile(models.Model):
 
 # This is how our backend will store our study group / events
 class GroupEvent(models.Model): 
-    title = models.CharField(max_length=200, default = "New Event") 
-    description = models.TextField(blank = True, default = "This event is happening!")
-    date = models.DateField(blank=True, default = date.today() + timedelta(days=7)) # Default to one week from today if no date is provided (USERS should specify tho)
-    location = models.TextField() 
+    group = models.ForeignKey(
+        'StudyGroup', 
+        on_delete=models.CASCADE, 
+        related_name='events', 
+        null=True
+        ) # allows us to associate events with a specific study group
 
-    # This stores the "group" in the database
-    attendees = models.ManyToManyField(User, related_name="events_attending",blank = True)
+    creator = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE, 
+        related_name='created_events',
+        null=True) # the user who created the event
 
+    title = models.CharField(max_length=255) # title of the event
+    description = models.TextField(blank=True) # description of the event
+    start_time = models.DateTimeField(null=True) # when the event starts
+    end_time = models.DateTimeField(null=True) # when the event ends
+    location = models.CharField(max_length=255, blank=True) # where the event will take place (can be virtual or physical)
 
-    def __str__(self):
+    attendees = models.ManyToManyField(
+        User,
+        related_name='events_attending',
+        blank=True
+    )
+
+    google_event_id = models.CharField(max_length=255, blank=True) 
+    google_event_link = models.URLField(blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True) 
+
+    class Meta:
+        ordering = ['start_time']
+
+    def __str__(self):    
         return self.title
 
 class FeedChat(models.Model):

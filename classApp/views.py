@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm 
 from django.contrib.auth.models import User
 from .forms import UserUpdateForm, ProfileUpdateForm, CustomRegistrationForm, FeedChatForm, ClassesForm, StudyGroupForm, GroupEventForm, GroupPostForm
-from .models import Profile, Major, FeedChat, College, StudyGroup, GroupPost
+from .models import Profile, Major, FeedChat, College, StudyGroup, GroupPost, GroupEvent
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -157,45 +157,72 @@ def profile(request):
 
 @login_required
 def profile_page(request):
-    events = request.user.events_attending.all().order_by('date')
+    events = request.user.events_attending.all().order_by('start_time')
     return render(request, "profile_page.html", {"events": events})
 
 @login_required
 def group_detail(request, group_id):
     group = get_object_or_404(StudyGroup, id=group_id)
-    is_member = request.user in group.members.all()
+    is_member = group.members.filter(id=request.user.id).exists()
+
     posts = group.posts.select_related('user').order_by('-created_at')
-    resources = group.posts.filter(resource_file__isnull=False).select_related('user').order_by('-created_at')
+    resources = group.posts.filter(
+        resource_file__isnull=False
+    ).exclude(
+        resource_file=''
+    ).select_related('user').order_by('-created_at')
+
+    events = group.events.select_related('creator').prefetch_related('attendees').order_by('start_time')
+
+    post_form = GroupPostForm()
+    event_form = GroupEventForm(group=group)
 
     if request.method == 'POST':
         if not is_member:
             messages.error(request, "You must join the group before posting.")
             return redirect('group_detail', group_id=group.id)
 
-        form = GroupPostForm(request.POST, request.FILES)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.group = group
-            post.user = request.user
+        if request.POST.get('form_type') == 'event':
+            event_form = GroupEventForm(request.POST, group=group)
 
-            if post.resource_file and not post.resource_title:
-                post.resource_title = post.resource_file.name.split('/')[-1]
+            if event_form.is_valid():
+                event = event_form.save(commit=False)
+                event.group = group
+                event.creator = request.user
+                event.save()
+                event_form.save_m2m()
+                event.attendees.add(request.user)
 
-            if post.resource_file and not post.resource_file_type:
-                filename = post.resource_file.name
-                if '.' in filename:
-                    post.resource_file_type = filename.split('.')[-1].lower()
+                messages.success(request, "Study session scheduled.")
+                return redirect('group_detail', group_id=group.id)
 
-            post.save()
-            messages.success(request, "Post shared with the group.")
-            return redirect('group_detail', group_id=group.id)
-    else:
-        form = GroupPostForm()
+        else:
+            post_form = GroupPostForm(request.POST, request.FILES)
+
+            if post_form.is_valid():
+                post = post_form.save(commit=False)
+                post.group = group
+                post.user = request.user
+
+                if post.resource_file and not post.resource_title:
+                    post.resource_title = post.resource_file.name.split('/')[-1]
+
+                if post.resource_file and not post.resource_file_type:
+                    filename = post.resource_file.name
+                    if '.' in filename:
+                        post.resource_file_type = filename.split('.')[-1].lower()
+
+                post.save()
+                messages.success(request, "Post shared with the group.")
+                return redirect('group_detail', group_id=group.id)
+
     return render(request, 'group_details.html', {
         'group': group,
         'posts': posts,
         'resources': resources,
-        'form': form,
+        'events': events,
+        'form': post_form,
+        'event_form': event_form,
         'is_member': is_member
     })
 
@@ -237,3 +264,36 @@ def delete_group_post(request, post_id):
             messages.error(request, "You can only delete your own posts.")
 
     return redirect('group_detail', group_id=post.group.id)
+
+@login_required
+def toggle_event_attendance(request, event_id):
+    event = get_object_or_404(GroupEvent, id=event_id)
+    group = event.group
+
+    if request.method == 'POST':
+        if not group.members.filter(id=request.user.id).exists():
+            messages.error(request, "You must join the group before attending a study session.")
+            return redirect('group_detail', group_id=group.id)
+
+        if event.attendees.filter(id=request.user.id).exists():
+            event.attendees.remove(request.user)
+            messages.success(request, "You are no longer attending this session.")
+        else:
+            event.attendees.add(request.user)
+            messages.success(request, "You are now attending this session.")
+
+    return redirect('group_detail', group_id=group.id)
+
+@login_required
+def delete_group_event(request, event_id):
+    event = get_object_or_404(GroupEvent, id=event_id)
+    group = event.group
+
+    if request.method == 'POST':
+        if request.user == event.creator or request.user == group.creator:
+            event.delete()
+            messages.success(request, "Study session deleted.")
+        else:
+            messages.error(request, "You can only delete sessions you created.")
+
+    return redirect('group_detail', group_id=group.id)
