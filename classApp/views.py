@@ -234,7 +234,7 @@ def group_detail(request, group_id):
     group = get_object_or_404(StudyGroup, id=group_id)
     is_member = request.user in group.members.all()
     posts = group.posts.select_related('user').order_by('-created_at')
-    resources = group.posts.filter(resource_file__isnull=False).select_related('user').order_by('-created_at')
+    resources = group.posts.filter(resource_file__isnull=False).exclude(resource_file="").select_related('user').order_by('-created_at')
 
     if request.method == 'POST':
         if not is_member:
@@ -242,18 +242,24 @@ def group_detail(request, group_id):
             return redirect('group_detail', group_id=group.id)
 
         form = GroupPostForm(request.POST, request.FILES)
+        post_type = request.POST.get('post_type', 'text')
+
         if form.is_valid():
             post = form.save(commit=False)
             post.group = group
             post.user = request.user
 
-            if post.resource_file and not post.resource_title:
-                post.resource_title = post.resource_file.name.split('/')[-1]
-
-            if post.resource_file and not post.resource_file_type:
-                filename = post.resource_file.name
-                if '.' in filename:
-                    post.resource_file_type = filename.split('.')[-1].lower()
+            if post_type == 'resource' and post.resource_file:
+                if not post.resource_title:
+                    post.resource_title = post.resource_file.name.split('/')[-1]
+                if not post.resource_file_type:
+                    filename = post.resource_file.name
+                    if '.' in filename:
+                        post.resource_file_type = filename.split('.')[-1].lower()
+            elif post_type == 'text':
+                post.resource_file = None
+                post.resource_title = ''
+                post.resource_file_type = ''
 
             post.save()
             messages.success(request, "Post shared with the group.")
@@ -263,6 +269,7 @@ def group_detail(request, group_id):
             print(form.errors)
     else:
         form = GroupPostForm()
+
     return render(request, 'group_details.html', {
         'group': group,
         'posts': posts,
@@ -270,7 +277,6 @@ def group_detail(request, group_id):
         'form': form,
         'is_member': is_member
     })
-
 @login_required
 def join_group(request, group_id):
     group = get_object_or_404(StudyGroup, id=group_id)
