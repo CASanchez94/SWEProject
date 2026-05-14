@@ -60,6 +60,20 @@
       {% for group in user.study_groups.all %}
         <div class="col-md-6 mb-3">
           <div class="card rounded-4 shadow-sm p-3 h-100">
+            <h5 class="fw-bold mb-2">{{ event.title }}</h5>
+            <p class="mb-1">
+              <strong>Schedule:</strong>
+              {{ event.session_start_date|date:"M d, Y" }} - {{ event.session_end_date|date:"M d, Y" }}
+              <br>
+              <strong>Time:</strong>
+              {{ event.session_start_time|time:"g:i A" }} - {{ event.session_end_time|time:"g:i A" }}
+              <br>
+              <strong>Days:</strong>
+              {{ event.meeting_days }}
+            </p>
+            <p class="mb-0">
+              <strong>Location:</strong> {{ event.location }}
+            </p>
             <div class="d-flex align-items-start gap-3 mb-2">
               <div class="course-badge text-white rounded-2" style="background-color: {{ group.icon_color }}; width:40px; height:40px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                 {{ group.course_code|slice:":2"|upper }}
