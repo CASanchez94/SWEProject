@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from .models import Profile, Major, FeedChat, College, Course, StudyGroup, GroupPost, GroupEvent
 from .forms import (
     UserUpdateForm, ProfileUpdateForm, CustomRegistrationForm,
-    FeedChatForm, ClassEntryForm, StudyGroupForm,
+    FeedChatForm, ClassesForm, StudyGroupForm,
     GroupEventForm, GroupPostForm
 )
 
@@ -41,12 +41,6 @@ def login_view(request):
     return render(request, 'login.html', {
         'form': form
     })
-
-
-
-
-
-
 
 @login_required
 def home(request):
@@ -154,7 +148,7 @@ def register_step2(request, user_id):
         form_valid = True
 
         for i in range(class_count):
-            form = ClassEntryForm(request.POST, prefix=f'class_{i}')
+            form = ClassesForm(request.POST, prefix=f'class_{i}')
             class_forms.append(form)
 
             if form.is_valid():
@@ -180,7 +174,7 @@ def register_step2(request, user_id):
             return redirect('login')
     else:
         for i in range(default_rows):
-            class_forms.append(ClassEntryForm(prefix=f'class_{i}'))
+            class_forms.append(ClassesForm(prefix=f'class_{i}'))
 
     return render(request, 'register_step2.html', {
         'class_forms': class_forms,
@@ -228,6 +222,7 @@ def profile(request):
 def profile_page(request):
     events = request.user.events_attending.all().order_by('session_start_date', 'session_start_time')
     return render(request, "profile_page.html", {"events": events})
+
 @login_required
 def group_detail(request, group_id):
     group = get_object_or_404(StudyGroup, id=group_id)
@@ -350,7 +345,7 @@ def toggle_event_attendance(request, event_id):
     if request.method == 'POST':
         if not group.members.filter(id=request.user.id).exists():
             messages.error(request, "You must join the group before attending a study session.")
-            return redirect('group_detail', group_id=group.id)
+            return redirect(request.META.get('HTTP_REFERER', 'group_detail'))
 
         if event.attendees.filter(id=request.user.id).exists():
             event.attendees.remove(request.user)
@@ -359,7 +354,7 @@ def toggle_event_attendance(request, event_id):
             event.attendees.add(request.user)
             messages.success(request, "You are now attending this session.")
 
-    return redirect('group_detail', group_id=group.id)
+    return redirect(request.META.get('HTTP_REFERER', 'group_detail'))
 
 @login_required
 def delete_group_event(request, event_id):

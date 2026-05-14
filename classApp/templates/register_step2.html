@@ -32,39 +32,12 @@
                     {% csrf_token %}
                     <input type="hidden" name="class_count" id="class_count" value="{{ class_forms|length }}">
 
-                    <div class="mb-4">
-                        <p class="text-muted small mb-3">Enter your current classes using the subject and section number. Add as many rows as you need.</p>
-                        <div id="classRows">
-                            {% for form in class_forms %}
-                                <div class="row g-3 mb-3 align-items-end class-row" data-index="{{ forloop.counter0 }}">
-                                    <div class="col-5">
-                                        <label class="form-label fw-semibold" for="{{ form.subject.id_for_label }}">Subject</label>
-                                        {{ form.subject }}
-                                        {% if form.subject.errors %}
-                                            <div class="text-danger small mt-1">{{ form.subject.errors|striptags }}</div>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-5">
-                                        <label class="form-label fw-semibold" for="{{ form.section_number.id_for_label }}">Section Number</label>
-                                        {{ form.section_number }}
-                                        {% if form.section_number.errors %}
-                                            <div class="text-danger small mt-1">{{ form.section_number.errors|striptags }}</div>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-2 d-flex align-items-end">
-                                        <button type="button" class="btn btn-outline-danger btn-sm remove-class-row">Remove</button>
-                                    </div>
-                                    {% if form.non_field_errors %}
-                                        <div class="col-12">
-                                            <div class="alert alert-danger py-2 mb-3">
-                                                {{ form.non_field_errors|striptags }}
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            {% endfor %}
-                        </div>
-                        <button type="button" class="btn btn-link p-0" id="addClassRow">+ Add another class</button>
+                    <div id="classRows"></div>
+                    
+                    <div class="d-flex justify-content-center mb-4">
+                        <button type="button" class="btn btn-primary btn-lg rounded-pill shadow-sm px-5" id="addClassRow">
+                            + Add Class
+                        </button>
                     </div>
 
                     <div class="d-grid gap-2">

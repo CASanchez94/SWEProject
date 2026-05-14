@@ -28,13 +28,13 @@ class ClassesForm(forms.ModelForm):
 
 class GroupEventForm(forms.ModelForm):
     DAYS_OF_WEEK = [
-        ('MO', 'Monday'),
-        ('TU', 'Tuesday'),
-        ('WE', 'Wednesday'),
-        ('TH', 'Thursday'),
-        ('FR', 'Friday'),
-        ('SA', 'Saturday'),
-        ('SU', 'Sunday'),
+        ('MON', 'Monday'),
+        ('TUES', 'Tuesday'),
+        ('WED', 'Wednesday'),
+        ('THUR', 'Thursday'),
+        ('FRI', 'Friday'),
+        ('SAT', 'Saturday'),
+        ('SUN', 'Sunday'),
     ]
 
     meeting_days = forms.MultipleChoiceField(
