@@ -96,7 +96,7 @@
 
             <!-- RESOURCE -->
             <div class="post-section d-none" id="resourceSection">
-                <div class="mb-2">{{ form.content }}</div>
+                <!--<div class="mb-2">{{ form.content }}</div> -->
                 <div class="mb-2">{{ form.resource_file }}</div>
                 <div class="mb-2">{{ form.resource_title }}</div>
                 <div class="mb-2">{{ form.resource_file_type }}</div>
@@ -137,7 +137,7 @@
                         <p class="mb-3">{{ post.content }}</p>
                     {% endif %}
 
-                    {% if post.resource_file %}
+                    {% if post.resource_file and post.resource_file.name %}
                         <div class="border rounded-3 p-3 d-flex align-items-center justify-content-between">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="rounded-3 p-2" style="background-color:#eff6ff">
@@ -176,7 +176,7 @@
 
 <div id="resourcesTab" class="group-tab-content d-none">
     {% if is_member %}
-        {% if resources %}
+        {% if resource.resource_file and resource.resource_file.name %}
             {% for resource in resources %}
                 <div class="card border-0 shadow-sm rounded-4 mb-3">
                     <div class="card-body p-4 d-flex align-items-center justify-content-between">
