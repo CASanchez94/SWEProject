@@ -1,10 +1,52 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.forms import UserCreationForm 
-from django.contrib.auth.models import User
-from .forms import UserUpdateForm, ProfileUpdateForm, CustomRegistrationForm, FeedChatForm, ClassesForm, StudyGroupForm, GroupEventForm, GroupPostForm
-from .models import Profile, Major, FeedChat, College, StudyGroup, GroupPost, GroupEvent
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.models import User
+
+from .models import Profile, Major, FeedChat, College, Course, StudyGroup, GroupPost, GroupEvent
+from .forms import (
+    UserUpdateForm, ProfileUpdateForm, CustomRegistrationForm,
+    FeedChatForm, ClassEntryForm, StudyGroupForm,
+    GroupEventForm, GroupPostForm
+)
+
+def login_view(request):
+
+    if request.method == 'POST':
+
+        form = AuthenticationForm(request, data=request.POST)
+
+        if form.is_valid():
+
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+
+            user = authenticate(
+                request,
+                username=username,
+                password=password
+            )
+
+            if user is not None:
+                login(request, user)
+                return redirect('home')
+
+        messages.error(request, "Invalid username or password.")
+
+    else:
+        form = AuthenticationForm()
+
+    return render(request, 'login.html', {
+        'form': form
+    })
+
+
+
+
+
+
 
 @login_required
 def home(request):
@@ -101,20 +143,47 @@ def register_step2(request, user_id):
         user = User.objects.get(id=user_id)
     except User.DoesNotExist:
         return redirect('register')
-    
+
     profile = user.profile
-    
+    class_forms = []
+    default_rows = 2
+
     if request.method == 'POST':
-        form = ClassesForm(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
+        class_count = int(request.POST.get('class_count', 0))
+        classes_to_add = []
+        form_valid = True
+
+        for i in range(class_count):
+            form = ClassEntryForm(request.POST, prefix=f'class_{i}')
+            class_forms.append(form)
+
+            if form.is_valid():
+                subject = form.cleaned_data['subject'].strip()
+                section_number = form.cleaned_data['section_number'].strip()
+                if subject or section_number:
+                    if not subject or not section_number:
+                        form.add_error(None, 'Both subject and section number are required for each class entry.')
+                        form_valid = False
+                    else:
+                        classes_to_add.append((subject, section_number))
+            else:
+                form_valid = False
+
+        if form_valid:
+            for subject, section_number in classes_to_add:
+                course_name = f"{subject} {section_number}"
+                course, _ = Course.objects.get_or_create(name=course_name)
+                profile.classes.add(course)
+
+            profile.save()
             messages.success(request, "Account setup complete! Welcome to Study App Name!")
             return redirect('login')
     else:
-        form = ClassesForm(instance=profile)
-    
+        for i in range(default_rows):
+            class_forms.append(ClassEntryForm(prefix=f'class_{i}'))
+
     return render(request, 'register_step2.html', {
-        'form': form,
+        'class_forms': class_forms,
         'user': user,
         'profile': profile
     })
@@ -159,7 +228,6 @@ def profile(request):
 def profile_page(request):
     events = request.user.events_attending.all().order_by('start_time')
     return render(request, "profile_page.html", {"events": events})
-
 @login_required
 def group_detail(request, group_id):
     group = get_object_or_404(StudyGroup, id=group_id)
@@ -169,7 +237,7 @@ def group_detail(request, group_id):
     resources = group.posts.filter(
         resource_file__isnull=False
     ).exclude(
-        resource_file=''
+        resource_file=""
     ).select_related('user').order_by('-created_at')
 
     events = group.events.select_related('creator').prefetch_related('attendees').order_by('start_time')
@@ -198,23 +266,32 @@ def group_detail(request, group_id):
 
         else:
             post_form = GroupPostForm(request.POST, request.FILES)
+            post_type = request.POST.get('post_type', 'text')
 
             if post_form.is_valid():
                 post = post_form.save(commit=False)
                 post.group = group
                 post.user = request.user
 
-                if post.resource_file and not post.resource_title:
-                    post.resource_title = post.resource_file.name.split('/')[-1]
+                if post_type == 'resource' and post.resource_file:
+                    if not post.resource_title:
+                        post.resource_title = post.resource_file.name.split('/')[-1]
 
-                if post.resource_file and not post.resource_file_type:
-                    filename = post.resource_file.name
-                    if '.' in filename:
-                        post.resource_file_type = filename.split('.')[-1].lower()
+                    if not post.resource_file_type:
+                        filename = post.resource_file.name
+                        if '.' in filename:
+                            post.resource_file_type = filename.split('.')[-1].lower()
+
+                elif post_type == 'text':
+                    post.resource_file = None
+                    post.resource_title = ''
+                    post.resource_file_type = ''
 
                 post.save()
                 messages.success(request, "Post shared with the group.")
                 return redirect('group_detail', group_id=group.id)
+            else:
+                print(post_form.errors)
 
     return render(request, 'group_details.html', {
         'group': group,
@@ -225,7 +302,7 @@ def group_detail(request, group_id):
         'event_form': event_form,
         'is_member': is_member
     })
-
+  
 @login_required
 def join_group(request, group_id):
     group = get_object_or_404(StudyGroup, id=group_id)

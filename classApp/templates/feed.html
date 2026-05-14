@@ -4,34 +4,40 @@
 <h1 class="fw-bold fs-1">Your Feed</h1>
 <p>Stay updated with posts from your study group</p>
 
-<div class="card mb-4 shadow-sm">
-    <div class="card-body">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+<button id="openPostButton" class="btn btn-primary mb-4">
+    New Post
+</button>
 
-            <div class="mb-3">
-                {{ form.content }}
-            </div>
+<div id="feedPostForm" class="collapse">
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
 
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Upload Resource (optional)</label>
-                {{ form.resource_file }}
-            </div>
+                <div class="mb-3">
+                    {{ form.content }}
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Resource Title</label>
-                {{ form.resource_title }}
-            </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Upload Resource (optional)</label>
+                    {{ form.resource_file }}
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label fw-semibold">File Type</label>
-                {{ form.resource_file_type }}
-            </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Resource Title</label>
+                    {{ form.resource_title }}
+                </div>
 
-            <div class="text-end">
-                <button type="submit" class="btn btn-primary">Post</button>
-            </div>
-        </form>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">File Type</label>
+                    {{ form.resource_file_type }}
+                </div>
+
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary">Post</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -76,5 +82,25 @@
 {% else %}
     <p class="text-muted">No posts yet.</p>
 {% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const openButton = document.getElementById('openPostButton');
+    const postForm = document.getElementById('feedPostForm');
+
+    if (!openButton || !postForm) {
+        return;
+    }
+
+    openButton.addEventListener('click', function () {
+        postForm.classList.toggle('show');
+        if (postForm.classList.contains('show')) {
+            openButton.textContent = 'Hide Post';
+        } else {
+            openButton.textContent = 'New Post';
+        }
+    });
+});
+</script>
 
 {% endblock %}

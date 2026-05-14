@@ -71,6 +71,26 @@ class GroupEventForm(forms.ModelForm):
 
         return cleaned_data
 
+class ClassEntryForm(forms.Form):
+	subject = forms.CharField(
+		max_length=50,
+		required=False,
+		label="Subject",
+		widget=forms.TextInput(attrs={
+			'class': 'form-control form-control-lg rounded-3',
+			'placeholder': 'e.g. CSCI or Software Engineering'
+		})
+	)
+	section_number = forms.CharField(
+		max_length=20,
+		required=False,
+		label="Section Number",
+		widget=forms.TextInput(attrs={
+			'class': 'form-control form-control-lg rounded-3',
+			'placeholder': 'e.g. 3340 or 01'
+		})
+	)
+
 class CustomRegistrationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True)
     last_name = forms.CharField(max_length=30, required=True)
