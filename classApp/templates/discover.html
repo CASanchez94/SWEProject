@@ -168,12 +168,31 @@ document.addEventListener('DOMContentLoaded', function () {
         groupCards.forEach((card) => {
             const category = card.dataset.category.toLowerCase();
             const searchableText = card.dataset.search.toLowerCase();
+            const filterText = `${category} ${searchableText}`;
+
+            const filterMatches = {
+                'computer science': ['computer science', 'csci', 'cs'],
+                'chemistry': ['chemistry', 'chem', 'ch'],
+                'mathematics': ['mathematics', 'math', 'mth'],
+                'physics': ['physics', 'phys', 'ph'],
+                'history': ['history', 'hist']
+            };
+
+            const knownMatch = Object.values(filterMatches).some((keywords) => {
+                return keywords.some((keyword) => filterText.includes(keyword));
+            });
 
             const matchesFilter = activeFilter === 'all'
-                || (activeFilter === 'other' && !otherCategories.includes(category))
-                || category.includes(activeFilter);
-            const matchesSearch = searchableText.includes(searchValue);
+                || (
+                    activeFilter === 'other'
+                    && !knownMatch
+                )
+                || (
+                    filterMatches[activeFilter]
+                    && filterMatches[activeFilter].some((keyword) => filterText.includes(keyword))
+                );
 
+            const matchesSearch = searchableText.includes(searchValue);
             if (matchesFilter && matchesSearch) {
                 card.classList.remove('hidden');
                 visibleCount++;
